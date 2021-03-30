@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages My name is Mike
+## Welcome to GitHub Pages https://mdlister.github.io/Blog/
 
 You can use the [editor on GitHub](https://github.com/mdlister/Blog/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
 
@@ -25,7 +25,7 @@ Syntax highlighted code block
 
 [Link](url) and ![Image](src)
 ```
-
+[image](\images/Terraform_on_Azure.jpeg)
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
 ### Jekyll Themes
