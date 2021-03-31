@@ -25,7 +25,8 @@ Syntax highlighted code block
 
 [Link](url) and ![Image](src)
 ```
-<img src="./images/Terraform_on_Azure.jpeg">
+![Image](./images/Terraform_on_Azure.jpeg)
+
 
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
