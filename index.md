@@ -8,6 +8,6 @@ Hi I'm Mike, I've been working in IT for over 15 years now and have always found
 
 https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax
 
-Our Latest Articles 
+Our Latest Articles:
 
-[Windows Virtual Desktop Terraform Deployment](Windows%20Virtual Desktop Spring Update Arm Terraform.md)
+[Windows Virtual Desktop Terraform Deployment](Windows-Virtual-Desktop-Spring-Update-Arm-Terraform.md)
