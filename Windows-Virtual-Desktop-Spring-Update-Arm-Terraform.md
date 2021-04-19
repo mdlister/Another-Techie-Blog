@@ -1,5 +1,5 @@
-#Windows Virtual Desktop Terraform Deployment
-##WVD Spring Update
+# Windows Virtual Desktop Terraform Deployment
+## WVD Spring Update
 I wanted to put together some articles to explain how you can use Terraform and the AzureRM provider to build out a Windows Virtual Desktop deployment. 
 
 I've been working with terraform since January 2021 as I can see the benefits that Infrastructure as Code (IAC) brings. I'm not a developer, I'd call myself a windows engineer with over 15 years supporting and looking after Microsoft products and mostly using VBScript and now Powershell to get everything I wanted to be done. 
@@ -14,7 +14,20 @@ I found this diagram from Tom Hickling very useful to understand the terminology
 
 #Getting Started
 
-[[_TOC_]]
+- [Windows Virtual Desktop Terraform Deployment](#windows-virtual-desktop-terraform-deployment)
+  - [WVD Spring Update](#wvd-spring-update)
+  - [Assumptions](#assumptions)
+  - [High-Level Steps](#high-level-steps)
+    - [Step 1 - Building the Workspace](#step-1---building-the-workspace)
+    - [Step 2 - Building the Hostpool](#step-2---building-the-hostpool)
+    - [Step 3 - Building the Virtual Machine](#step-3---building-the-virtual-machine)
+  -[WVD Spring Update](#wvd-spring-update)
+-[Getting Started](#getting-started)
+ - [Assumptions](#assumptions)
+ - [High-Level Steps](#high-level-steps)
+   - [Step 1 - Building the Workspace](#step-1---building-the-workspace)
+   - [Step 2 - Building the Hostpool](#step-2---building-the-hostpool)
+   - [Step 3 - Building the Virtual Machine](#step-3---building-the-virtual-machine)
 
 
 ## Assumptions
