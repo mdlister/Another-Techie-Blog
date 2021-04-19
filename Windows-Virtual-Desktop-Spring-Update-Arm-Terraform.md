@@ -10,7 +10,7 @@ I'll go through all the code and point out bits that I had issues with and some 
 
 I found this diagram from Tom Hickling very useful to understand the terminology and required components to build https://techcommunity.microsoft.com/t5/itops-talk-blog/windows-virtual-desktop-spring-update-enters-public-preview/ba-p/1340245
 
-![image.png](/.attachments/image-75973dda-b873-4552-8f5b-9739064bf0d4.png)
+![image.png](/images/image-75973dda-b873-4552-8f5b-9739064bf0d4.png)
 
 #Getting Started
 
@@ -328,11 +328,11 @@ And that's it, throw all this together with the variables.tf file with the value
 We'll go through all the resources there, some gotchas I found and wrap up with the code re-written into modules so it's repeatable. This is just to understand the concepts. 
 
 We create the following Resources (ordered as the code)
-- Network Interface
-- Azure Virtual Machine
-- Managed Disk
-- Data Disk Attachement
-- DSC Extensions
+* Network Interface
+* Azure Virtual Machine
+* Managed Disk
+* Data Disk Attachement
+* DSC Extensions
   - DomainJoin
   - Custom Script Extention  
   - Join the machine to host pool
@@ -351,7 +351,7 @@ Here we reference the source_image_reference and specify we want the latest vers
 ```
 you can get this information from the Azure Portal when you look at your Shared Image Gallery, click on the image you want to use and select properties
 
-![image.png](/.attachments/image-c62a3dbe-4b01-4da0-991d-fe08b098bf68.png)
+![image.png](/images/image-c62a3dbe-4b01-4da0-991d-fe08b098bf68.png)
 
 The only other parts worth mentioning are the DSC parts. 
 
@@ -371,14 +371,14 @@ It calls configuration.ps1 and then the function AddSessionHost this has two req
 
 Why do we have to use registration_info[0].token I hear you say, good question... 
 
-![image.png](/.attachments/image-abeeecc5-ac98-4288-a5b9-c00913bff6c3.png)
+![image.png](/images/image-abeeecc5-ac98-4288-a5b9-c00913bff6c3.png)
 
 When I ran the plan and apply I got the following error message, Registration_info is an object with three values so I have specified the token value. (In the module method of doing this I have done it slightly different outputting the token from the module and consuming it in another module but this way works too. 
 
-![image.png](/.attachments/image-1f150b36-cd5f-4964-a522-24b91a3a1faf.png)
+![image.png](/images/image-1f150b36-cd5f-4964-a522-24b91a3a1faf.png)
 
 it's also case sensitive!! 
 
 Finally, when it works, I also output the values on the screen just to see what they were, here you can see the three values the Registration_Information block holds
 
-![image.png](/.attachments/image-24959617-5921-43e8-b6e8-28ffd5b4dd13.png)
+![image.png](/images/image-24959617-5921-43e8-b6e8-28ffd5b4dd13.png)
