@@ -12,10 +12,11 @@ I found this diagram from Tom Hickling very useful to understand the terminology
 
 ![image.png](/images/image-75973dda-b873-4552-8f5b-9739064bf0d4.png)
 
-#Getting Started
+# Getting Started
 
 - [Windows Virtual Desktop Terraform Deployment](#windows-virtual-desktop-terraform-deployment)
   - [WVD Spring Update](#wvd-spring-update)
+- [Getting Started](#getting-started)
   - [Assumptions](#assumptions)
   - [High-Level Steps](#high-level-steps)
     - [Step 1 - Building the Workspace](#step-1---building-the-workspace)
@@ -192,7 +193,6 @@ resource "azurerm_network_interface" "rdsh" {
 }
 
 resource "azurerm_windows_virtual_machine" "main" {
-  #changed resource type from "azurerm_virtual_machine" to 
   count                 = var.rdsh_count
   name                  = "${var.vm_prefix}-vm-${count.index + 1}"
   location              = var.region
@@ -350,7 +350,7 @@ We create the following Resources (ordered as the code)
   - Custom Script Extention  
   - Join the machine to host pool
 
-Some notes worth mentioning here, I am not using Availability Sets, instead, I've opted for Azure Availability Zones if I want three machines, it will create a machine per zone spreading the load across the three zones. 
+Some notes worth mentioning here, I am not using Availability Sets, instead, I've opted for Azure Availability Zones if I want three machines, it will create a machine per zone spreading the load across the three zones. Also the type from "azurerm_virtual_machine" is going to be depricated so took advantage of using the new resource.
 ```
   source_image_reference {
     publisher = "MicrosoftWindowsDesktop"
