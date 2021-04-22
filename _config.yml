@@ -1,25 +1,29 @@
-theme: jekyll-theme-midnight
-
 title: Welcome to Another Techie Blog
-tagline: 
+author: Mike Lister
+email: lister_michael@hotmail.com
 description: Me sharing my experiences with anything Terraform, Azure, Powershell and all those other good things.
 
-show_downloads: false
-google_analytics: G-W2ZWFNRV31
-logo: /assets/your-company-logo.png
 
+url: "https://anothertechieblog.co.uk"
+
+lang: en-us
+
+google_analytics: G-W2ZWFNRV31
+
+# social links
+social:
+  name: Mike Lister
+  links:
+    - https://github.com/mdlister
+    - https://facebook.com/mdlister
+    - https://twitter.com/mdlister
+
+
+# seo
 twitter:
   username: mdlister
   card: summary
 
-  social:
-  name: Mike Lister
-  links:
-https://twitter.com/mdlister
-https://www.facebook.com/mdlister
-https://www.linkedin.com/in/mdlister
-https://github.com/mdlister
-
-
-webmaster_verifications:
-  google: 1234
+# build settings
+theme: jekyll-theme-midnight
+show_downloads: false
