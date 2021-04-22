@@ -1,7 +1,7 @@
 theme: jekyll-theme-midnight
 
-title: [The title of your site]
-description: [A short description of your site's purpose]
+title: [Welcome to Another Techie Blog]
+description: [Me sharing my experiences with Terraform, Azure, Powershell and all those good things.]
 
 show_downloads: ["false"]
 google_analytics: [G-W2ZWFNRV31]
