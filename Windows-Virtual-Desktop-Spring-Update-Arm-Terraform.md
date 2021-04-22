@@ -1,3 +1,7 @@
+---
+---
+
+@import "{{ site.theme }}";
 # Windows Virtual Desktop Terraform Deployment
 ## WVD Spring Update
 I wanted to put together some articles to explain how you can use Terraform and the AzureRM provider to build out a Windows Virtual Desktop deployment. 
