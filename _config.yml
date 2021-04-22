@@ -1,7 +1,25 @@
 theme: jekyll-theme-midnight
 
-title: [Welcome to Another Techie Blog]
-description: [Me sharing my experiences with Terraform Azure Powershell and all those good things.]
+title: Welcome to Another Techie Blog
+tagline: 
+description: Me sharing my experiences with anything Terraform, Azure, Powershell and all those other good things.
 
-show_downloads: ["false"]
-google_analytics: [G-W2ZWFNRV31]
+show_downloads: false
+google_analytics: G-W2ZWFNRV31
+logo: /assets/your-company-logo.png
+
+twitter:
+  username: mdlister
+  card: summary
+
+  social:
+  name: Mike Lister
+  links:
+    - https://twitter.com/mdlister
+    - https://www.facebook.com/mdlister
+    - https://www.linkedin.com/in/mdlister
+    - https://github.com/mdlister
+
+
+    webmaster_verifications:
+  google: 1234
