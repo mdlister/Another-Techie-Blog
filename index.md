@@ -1,7 +1,3 @@
----
----
-
-@import "{{ site.theme }}";
 # Welcome to Another Techie Blog
 ![Terraform](./images/Terraform_on_Azure.jpeg)
 ### Helping others
