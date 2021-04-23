@@ -395,3 +395,5 @@ it's also case sensitive!!
 Finally, when it works, I also output the values on the screen just to see what they were, here you can see the three values the Registration_Information block holds
 
 ![image.png](/images/image-24959617-5921-43e8-b6e8-28ffd5b4dd13.png)
+
+[Top](#windows-virtual-desktop-terraform-deployment)
