@@ -1,29 +1,22 @@
-
 <!doctype html>
+<html class="no-js" lang="en">
 
+  {% include head.html %}
+  
   <body>
-    <div id="header">
-      <nav>
-        
-        <li class="fork"><a href="{{ site.url }}">Home</a></li>
-      </nav>
-    </div><!-- end header -->
+    <div class="grid-container">
+      {% include header.html %}
 
-    <div class="wrapper">
+      
+          {{ content }}
 
-      <section>
-        <div id="title">
-          <h1>{{ site.title | default: site.github.repository_name }}</h1>
-          <p>{{ site.description | default: site.github.project_tagline }}</p>
 
-        {{ content }}
-
-      </section>
-
-    </div><!-- end wrapper -->
-
-<div class="footer">
-    {% include footer.html %}
-</div><!-- end footer -->
+    </div>
+      {% include footer.html %}
+    
+      <script src="../assets/js/vendor.js"></script>
+      <script src="../assets/js/foundation.js"></script>
+    
   </body>
+
 </html>
