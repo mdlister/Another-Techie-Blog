@@ -7,7 +7,7 @@ nav: false
 
 <div class="grid-x grid-margin-x">
 
-
+    {% if page.title == "Home" %}
       {% for post in site.posts limit: 3 %}
       <div class="cell medium-4">
       <div class=" main-post">
@@ -22,7 +22,7 @@ nav: false
       </div>
       </div>
       {% endfor %}
-
+      {% endif %}
   </div>
 
 
