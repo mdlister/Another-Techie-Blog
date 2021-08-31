@@ -1,6 +1,54 @@
+---
+layout: default
+title: Home
+nav: false
+
+---
+
+<div class="grid-x grid-margin-x">
+
+    {% if page.url == "/index.html" %}
+      {% for post in site.posts limit: 3 %}
+      <div class="cell medium-4">
+      <div class=" main-post">
+        <a href="{{ post.url | prepend: site.baseurl }}" class="main-post-title">{{ post.title  }}</a>
+        <span>{{ post.date | date: '%B %d, %Y' }}</span>
+        
+        <div class="main-thumb">
+          <a href="{{ post.url | prepend: site.baseurl }}"><img src="/images/{{ post.thumb }}" /></a>
+          </div>
+
+          <p>{{ post.description }}</p>
+      </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+  </div>
+
+
+  <div class="grid-x sections">
+    <div class="cell large-9">
+          <div class="grid-x sub-posts">
+            <div class="cell large-2">
+              <a href="{{ post.url | prepend: site.baseurl }}">
+                <div class="sub-thumb" style="background-image: url(/images/terraform.png);"></div></a>
+            </div>
+            <div class="cell large-10">
+              <a href="{{ post.url | prepend: site.baseurl }}" class="sub-post-title">{{ post.title  }}</a>
+              <span>{{ post.date | date: '%B %d, %Y' }}</span>
+              <p>{{ post.description | truncatewords: 20 }}</p>
+            </div>
+          </div>
+    </div>
+    <div class="cell large-3 columns ad">
+      <a href="#"><img src="/images/banner-ad.png"></a>
+    </div>
+
+
+
 # Welcome to Another Techie Blog
 ![Terraform](./images/Terraform_on_Azure.jpeg)
-### Helping others
+### Helping others 
 
 
 
