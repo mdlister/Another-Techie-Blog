@@ -7,7 +7,7 @@ image:
  width: 1200
  height: 1200
 ---
-y name is [Henrik Lau Eriksson](https://henrik.laueriksson.com) and I live in Stockholm, Sweden.
+my name is [Henrik Lau Eriksson](https://henrik.laueriksson.com) and I live in Stockholm, Sweden.
 
 I'm a programmer with focus on _[.NET](https://www.microsoft.com/net) / ASP.NET / C#_ ⚙️
 
