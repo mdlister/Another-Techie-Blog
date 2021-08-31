@@ -28,6 +28,7 @@ nav: false
 
   <div class="grid-x sections">
     <div class="cell large-9">
+      {% for post in site.posts %}
           <div class="grid-x sub-posts">
             <div class="cell large-2">
               <a href="{{ post.url | prepend: site.baseurl }}">
@@ -39,6 +40,7 @@ nav: false
               <p>{{ post.description | truncatewords: 20 }}</p>
             </div>
           </div>
+      {% endfor %}
     </div>
     <div class="cell large-3 columns ad">
       <a href="#"><img src="/images/banner-ad.png"></a>
