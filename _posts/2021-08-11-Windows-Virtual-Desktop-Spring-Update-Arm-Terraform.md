@@ -1,3 +1,19 @@
+---
+layout: default
+comments: true
+
+title: Windows Virtual Desktop Spring Update Arm Terraform
+modified: 2021-04-11
+description: A working example of Terraform and the WVD Spring Update
+tags:
+  - Terraform
+  - AzureRM
+  - Azure
+  - WVD
+  - Windows Virtual Desktop
+
+
+---
 # Windows Virtual Desktop Terraform Deployment
 ## WVD Spring Update
 I wanted to put together some articles to explain how you can use Terraform and the AzureRM provider to build out a Windows Virtual Desktop deployment. 

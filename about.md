@@ -1,24 +1,15 @@
 ---
 layout: page
 title: About
+nav: true
 permalink: /about/
-image:
- path: https://s.gravatar.com/avatar/27df7a0a062537ef9116a1572707d5e0?s=1200
- width: 1200
- height: 1200
 ---
-my name is [Henrik Lau Eriksson](https://henrik.laueriksson.com) and I live in Stockholm, Sweden.
 
-I'm a programmer with focus on _[.NET](https://www.microsoft.com/net) / ASP.NET / C#_ ⚙️
 
-For the last couple of years I have been working in the Payment industry 💳
+Hi I'm Mike, I've been working in IT for over 15 years now and have always found that blog articles are usually the best source of information when it comes to finding the answers. So I want to share what I've been doing in the world of Terraform and Azure. 
 
-I write code for the Web 🌐
+https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax
 
->Usually `backend` 🐴
->
->Sometimes `frontend` 🦄
 
-I studied computer science at [KTH Royal Institute of Technology](https://www.kth.se/profile/heer/?l=en)
+Mike Lister Hello
 
-This blog is my tool to become a better developer. I write about the things I learn, the things I find exciting and the things I want my future self to remember.
