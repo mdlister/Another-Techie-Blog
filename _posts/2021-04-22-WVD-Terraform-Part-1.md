@@ -1,7 +1,7 @@
 ---
 layout: default
 comments: true
-thumb: terraform_on_azure.jpeg
+thumb: Terraform_on_Azure.jpeg
 title: Windows Virtual Desktop Spring Update ARM Terraform
 modified: 2021-04-22
 description: A working example of Terraform and the WVD Spring Update
