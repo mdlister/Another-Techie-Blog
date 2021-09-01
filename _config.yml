@@ -20,6 +20,9 @@ social:
 
 
 # seo
+plugins:
+  - jekyll-seo-tag
+  
 twitter:
   username: mdlister
   card: summary
@@ -27,3 +30,7 @@ twitter:
 # build settings
 theme: jekyll-theme-midnight
 show_downloads: false
+
+
+
+  
