@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Contact
-nav: true
+title: Random
+nav: false
 permalink: /contact/
 ---
 
