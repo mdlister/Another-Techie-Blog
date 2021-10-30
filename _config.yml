@@ -25,7 +25,7 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
 
-paginate: 2
+paginate: 4
 paginate_path: "/page:num/"
 
 twitter:
@@ -36,6 +36,6 @@ twitter:
 theme: jekyll-theme-midnight
 show_downloads: false
 
-
+permalink: /:slug/
 
   
