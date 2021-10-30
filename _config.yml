@@ -22,7 +22,12 @@ social:
 # seo
 plugins:
   - jekyll-seo-tag
-  
+  - jekyll-feed
+  - jekyll-paginate
+
+paginate: 1
+paginate_path: "/page:num/"
+
 twitter:
   username: mdlister
   card: summary
