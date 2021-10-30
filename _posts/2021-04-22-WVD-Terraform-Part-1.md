@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 comments: true
 thumb: Terraform_on_Azure.jpeg
 title: Windows Virtual Desktop Terraform Deployment
