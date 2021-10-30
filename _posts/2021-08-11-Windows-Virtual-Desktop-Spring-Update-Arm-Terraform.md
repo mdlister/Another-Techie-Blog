@@ -3,6 +3,8 @@ layout: default
 comments: true
 thumb: Terraform_on_Azure.jpeg
 title: Windows Virtual Desktop Spring Update Arm Terraform
+tagline: Windows Virtual Desktop Spring Update Arm Terraform
+slug: Windows-Virtual-Desktop-Spring-Update-Arm-Terraform
 modified: 2021-04-11
 description: A working example of Terraform and the WVD Spring Update
 tags:
@@ -11,8 +13,6 @@ tags:
   - Azure
   - WVD
   - Windows Virtual Desktop
-
-
 ---
 # Windows Virtual Desktop Terraform Deployment
 ## WVD Spring Update
