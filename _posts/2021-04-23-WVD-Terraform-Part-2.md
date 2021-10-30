@@ -15,7 +15,6 @@ tags:
   - Windows Virtual Desktop
 ---
 
-# Windows Virtual Desktop Terraform Deployment
 ## WVD Spring Update
 I wanted to put together some articles to explain how you can use Terraform and the AzureRM provider to build out a Windows Virtual Desktop deployment. 
 
@@ -31,8 +30,6 @@ I found this diagram from Tom Hickling very useful to understand the terminology
 
 # Getting Started
 
-- [Windows Virtual Desktop Terraform Deployment](#windows-virtual-desktop-terraform-deployment)
-  - [WVD Spring Update](#wvd-spring-update)
 - [Getting Started](#getting-started)
   - [Assumptions](#assumptions)
   - [High-Level Steps](#high-level-steps)
@@ -66,6 +63,7 @@ You have an Active Directory Domain that the machine can join accessible from th
 ### Step 1 - Building the Workspace
 
 _Main.tf_
+
 ```
 provider "azurerm" {
   features {}
@@ -82,7 +80,7 @@ resource "azurerm_virtual_desktop_workspace" "example" {
   resource_group_name = azurerm_resource_group.example.name
   location            = "eastus" #azurerm_resource_group.example.location
   Location has to be one of the following eastus,eastus2,westus,westus2,northcentralus,southcentralus,westcentralus,centralus
-}
+}{: class="pre"}
 ```
 Main.tf contains all the code to create our resources, we also have variables.tf that contains all the variables which are available in the repo and we will go through them here as well. 
 
