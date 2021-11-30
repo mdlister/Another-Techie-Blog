@@ -10,7 +10,7 @@ nav: false
   {% for post in site.posts limit:1 %}
       <div class="callout warning large cell">
         <center><a href="{{ post.url }}">
-          <h3>{{ post.title }} </h3>
+          <h1>{{ post.title }} </h1>
           <p class="blogdate">{{ post.date | date: "%d %B %Y" }}</p>
           <img style="border-radius: 5px" src="/images/{{ post.thumb }}" /></a>
           
