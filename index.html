@@ -7,6 +7,17 @@ nav: false
 ---
 
 <div class="grid-x grid-margin-x">
+  {% for post in site.posts limit:1 %}
+      <div class="callout warning large">
+        <center><a href="{{ post.url }}">
+          <h3>{{ post.title }} </h3>
+          <p class="blogdate">{{ post.date | date: "%d %B %Y" }}</p>
+          <img style="max-width:500px; border-radius: 5px" src="/images/{{ post.thumb }}" /></a>
+          
+          <div>{{ post.content |truncatehtml | truncatewords: 100 }}</div> </a
+        ><a  class="button expanded" href="{{ post.url }}">Read More</a></center>
+      </div>
+      {% endfor %}
 
     {% if page.title == "Home" %}
       {% for post in site.posts limit: 3 %}
