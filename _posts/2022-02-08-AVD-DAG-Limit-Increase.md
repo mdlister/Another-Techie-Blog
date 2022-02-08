@@ -14,6 +14,8 @@ tags:
   - WVD
   - Windows Virtual Desktop
 ---
+##Azure Virtual Desktop News
+
 Good News for those using Azure Virtual Desktop (AVD) for Desktop Application Group (DAG) limit has been increased. 
 
 We've been working with AVD formally known as Windows Virtual Desktop (WVD) for over 2 years now and we haven't yet exceeded the DAG limit of 200 groups per tenant that was set back in December 2020 [https://docs.microsoft.com/en-us/azure/virtual-desktop/whats-new#application-group-limit-increase] (https://docs.microsoft.com/en-us/azure/virtual-desktop/whats-new#application-group-limit-increase)
