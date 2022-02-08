@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-thumb: Terraform_on_Azure.jpeg
+thumb: /assets/images/2022-02-08-AVD-DAG-Limit-Increase\2022-02-08-AVD-DAG-Limit-Increase.png
 title: Azure Virtual Desktop DAG Limit Increase
 tagline: Azure Virtual Desktop (AVD) DAG Limit increase
 slug: AVD-DAG-Limit-Increase
