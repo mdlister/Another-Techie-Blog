@@ -15,7 +15,7 @@ tags:
   - WVD
   - Windows Virtual Desktop
 ---
-##Azure Virtual Desktop News
+## Azure Virtual Desktop News
 
 Good News for those using Azure Virtual Desktop (AVD) for Desktop Application Group (DAG) limit has been increased. 
 
