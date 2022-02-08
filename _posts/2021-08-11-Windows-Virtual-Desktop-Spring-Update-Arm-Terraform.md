@@ -2,7 +2,7 @@
 layout: post
 comments: true
 thumb: Terraform_on_Azure.jpeg
-smallthumb: terraform.png
+smallthumb: Azure
 title: Windows Virtual Desktop Spring Update Arm Terraform
 tagline: Windows Virtual Desktop Spring Update Arm Terraform
 slug: Windows-Virtual-Desktop-Spring-Update-Arm-Terraform
