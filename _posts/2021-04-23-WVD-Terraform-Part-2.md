@@ -2,6 +2,7 @@
 layout: post
 comments: true
 thumb: Terraform_on_Azure.jpeg
+smallthumb: Terraform
 title: Windows Virtual Desktop Terraform Deployment Part 1
 tagline: Windows Virtual Desktop Terraform Deployment Replaces title if exists for long descritpion
 slug: Windows-Virtual-Desktop-Terraform-Deployment-part
