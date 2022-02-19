@@ -14,7 +14,7 @@ nav: false
           <p class="blogdate">{{ post.date | date: "%d %B %Y" }}</p>
           <img style="border-radius: 5px" src="/images/{{ post.thumb }}" /></a>
         </center>
-        <div style="text-align: left;">>{{ post.content |truncatehtml | truncatewords: 75 }}</div> </a
+        <div style="text-align: left;">{{ post.content |truncatehtml | truncatewords: 75 }}</div> </a
         ><a  class="button expanded" href="{{ post.url }}">Read More</a>
       </div>
       {% endfor %}
