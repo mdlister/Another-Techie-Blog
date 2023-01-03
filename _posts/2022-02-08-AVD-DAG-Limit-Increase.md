@@ -2,7 +2,7 @@
 layout: post
 comments: true
 thumb: 2022-02-08-AVD-DAG-Limit-Increase/2022-02-08-AVD-DAG-Limit-Increase.png
-smallthumb: zohosalesiq
+smallthumb: Azure
 title: Azure Virtual Desktop DAG Limit Increase
 tagline: Azure Virtual Desktop (AVD) DAG Limit increase
 slug: AVD-DAG-Limit-Increase

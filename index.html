@@ -50,6 +50,9 @@ nav: false
                 {% if post.smallthumb == "Terraform" %}
                 <div class="sub-thumb" style="background-image: url(/images/terraform.png);"></div></a>
                 {% endif %}
+                {% if post.smallthumb == "zohosalesiq" %}
+                <div class="sub-thumb" style="background-image: url(/images/zohosalesiq.png);"></div></a>
+                {% endif %}
             </div>
             <div class="cell large-10">
               <a href="{{ post.url | prepend: site.baseurl }}" class="sub-post-title">{{ post.title  }}</a>
