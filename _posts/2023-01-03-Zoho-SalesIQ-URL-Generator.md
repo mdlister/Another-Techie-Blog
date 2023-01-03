@@ -27,7 +27,7 @@ URL:<input type="text" id=url><br>
 First name:<input type="text" id="firstname"><br>
 Second name:<input type="text" id="secondname"><br>
 email:<input type="text" id=email><br>
-<input type="button" id="addbutton" value="concate" onClick="addTwoStrings()">
+<input type="button" id="addbutton" value="Generate URL" onClick="addTwoStrings()">
 <br>
 <br>
 <label id="generatedurl">Click Generate</label>
