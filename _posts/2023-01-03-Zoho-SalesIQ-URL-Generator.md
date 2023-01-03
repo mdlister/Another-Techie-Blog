@@ -1,8 +1,8 @@
 ---
 layout: post
 comments: true
-thumb: ZohoSalesIQ.png
-smallthumb: ZohoSalesIQ
+thumb: zohosalesiq.png
+smallthumb: zohosalesiq
 title: Zoho SalesIQ URL Generator
 tagline: Generate Zoho SalesIQ URL for your email Campaigns
 slug: Zoho-SalesIQ-URL-Generator
