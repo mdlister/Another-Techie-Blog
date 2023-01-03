@@ -30,7 +30,7 @@ email:<input type="text" id=email><br>
 <input type="button" id="addbutton" value="concate" onClick="addTwoStrings()">
 <br>
 <br>
-<label id="generatedurl"></label>
+<label id="generatedurl">Click Generate</label>
 <script>
 function addTwoStrings()
 {
