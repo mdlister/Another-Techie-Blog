@@ -31,6 +31,7 @@ email:<input type="text" id=email><br>
 <br>
 <br>
 <label id="generatedurl">Click Generate</label>
+
 <script>
 function addTwoStrings()
 {
@@ -39,6 +40,6 @@ var f2=document.getElementById("firstname").value;
 var f3=document.getElementById("secondname").value;
 var f4=document.getElementById("email").value;
 var result=f1+"?siq_name="+f2+"%20"+f3+"&siq_email="+f4;
-document.getElementById('lbltipAddedComment').innerHTML = result;
+document.getElementById('generatedurl').innerHTML = result;
 }
 </script>
