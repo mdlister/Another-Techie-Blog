@@ -28,6 +28,9 @@ First name:<input type="text" id="firstname"><br>
 Second name:<input type="text" id="secondname"><br>
 email:<input type="text" id=email><br>
 <input type="button" id="addbutton" value="concate" onClick="addTwoStrings()">
+<br>
+<br>
+<label id="generatedurl"></label>
 <script>
 function addTwoStrings()
 {
@@ -36,6 +39,6 @@ var f2=document.getElementById("firstname").value;
 var f3=document.getElementById("secondname").value;
 var f4=document.getElementById("email").value;
 var result=f1+"?siq_name="+f2+"%20"+f3+"&siq_email="+f4;
-document.write(result);
+document.getElementById('lbltipAddedComment').innerHTML = result;
 }
 </script>
