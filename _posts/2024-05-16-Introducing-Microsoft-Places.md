@@ -1,8 +1,8 @@
 ---
 layout: post
 comments: true
-thumb: Microsoft-Places.jpeg
-smallthumb: MicrosoftPlaces
+thumb: Screenshot 2024-05-16 at 23.29.40.png
+smallthumb: Screenshot 2024-05-16 at 23.29.40
 title: Introducing Microsoft Places
 tagline: A first look at Microsoft Places
 slug: Introducing-Microsoft-Places
