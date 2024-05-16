@@ -91,20 +91,20 @@ Stay tuned for more updates as I explore further features and capabilities of Mi
 
 After enabling Places, I restarted teams and found the Places app availabile
 
-![Screenshot 2024-05-16 at 12.50.59.png](/.attachments/Screenshot%202024-05-16%20at%2012.50.59-b24c1e46-9183-41c6-82fb-b29620439314.png)
+![Screenshot 2024-05-16 at 12.50.59.png](/images/Screenshot%202024-05-16%20at%2012.50.59-b24c1e46-9183-41c6-82fb-b29620439314.png)
 
 After adding the app, it's asking me to configure my working pattern, this can also be done in Outlook [Working Hours Microsoft Learn](https://support.microsoft.com/en-gb/office/set-your-work-hours-and-location-in-outlook-af2fddf9-249e-4710-9c95-5911edfd76f6#:~:text=Set%20work%20hours%20and%20location%20from%20Settings&text=Select%20Settings%20%3E%20Calendar.,days%2C%20times%2C%20and%20locations.)
-![Screenshot 2024-05-16 at 12.51.19.png](/.attachments/Screenshot%202024-05-16%20at%2012.51.19-4715f14b-0123-4a04-94c0-f24d12531615.png)
+![Screenshot 2024-05-16 at 12.51.19.png](/images/Screenshot%202024-05-16%20at%2012.51.19-4715f14b-0123-4a04-94c0-f24d12531615.png)
 After this is the opportunity to update your location. 
-![Screenshot 2024-05-16 at 12.51.51.png](/.attachments/Screenshot%202024-05-16%20at%2012.51.51-c5417513-bfa5-41cc-be8e-ea47c57d7f7b.png)
+![Screenshot 2024-05-16 at 12.51.51.png](/images/Screenshot%202024-05-16%20at%2012.51.51-c5417513-bfa5-41cc-be8e-ea47c57d7f7b.png)
 
-![Screenshot 2024-05-16 at 12.52.04.png](/.attachments/Screenshot%202024-05-16%20at%2012.52.04-ca95ad9a-d684-46cb-b22d-4fd3a20532ec.png)
+![Screenshot 2024-05-16 at 12.52.04.png](/images/Screenshot%202024-05-16%20at%2012.52.04-ca95ad9a-d684-46cb-b22d-4fd3a20532ec.png)
 
 Then the app opens, for me I could only see People across the top, in the videos and Microsoft screenshots there are more options, this could be because I haven't configured locations yet (this is also mentioned in the Outlook Link for working Hours above so I will be exploring that a little more in the next week) Or it could be as the deployment article from Microsoft suggests, those features are coming. 
 
-![Screenshot 2024-05-16 at 12.52.35.png](/.attachments/Screenshot%202024-05-16%20at%2012.52.35-38ada272-d790-4c11-8447-5a501f93db32.png)
+![Screenshot 2024-05-16 at 12.52.35.png](/images/Screenshot%202024-05-16%20at%2012.52.35-38ada272-d790-4c11-8447-5a501f93db32.png)
 
 Here is the Room Finder from Outlook Web 
-![Screenshot 2024-05-16 at 13.00.30.png](/.attachments/Screenshot%202024-05-16%20at%2013.00.30-01a3a443-542c-4f83-9b1b-0492f245b915.png)
+![Screenshot 2024-05-16 at 13.00.30.png](/images/Screenshot%202024-05-16%20at%2013.00.30-01a3a443-542c-4f83-9b1b-0492f245b915.png)
 
 When i queried the Powershell module to see what commands were available it didn't come back with many options but when trying to see how to use them there was no detailed help and nothing online as of yet. What I find when looking for these new things is everyone just rewrites the Microsoft articles, I wanted to be a bit different and try and talk through my experience of it. I hope this helped someone and thanks for reading. 
