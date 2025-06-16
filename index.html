@@ -41,7 +41,7 @@ nav: false
 
 
   <div class="grid-x sections">
-    <div class="cell large-9">
+    <div class="cell large-12">
       {% for post in paginator.posts %}
           <div class="grid-x sub-posts">
             <div class="cell large-2">
@@ -67,9 +67,6 @@ nav: false
           </div>
       {% endfor %}
       
-    </div>
-    <div class="cell large-3 columns ad">
-      <a href="#"><img src="/images/banner-ad.png"></a>
     </div>
     <div class="cell pagination">
       {% if paginator.previous_page %} 
