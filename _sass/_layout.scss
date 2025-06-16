@@ -1,332 +1,272 @@
-
-
 // _layout.scss
 
 /* ================
-   CSS Variables
+   Base Styles
    ================ */
-:root {
-  // These will be injected via head.html
-  --font: 'Roboto', sans-serif;
-
-  // Sizing
-  --main-titles-size: 2.2rem;
-* {
-  font-family: var(--font);
-}
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  background: var(--light);
-  color: var(--dark);
-}
-
-a {
-  text-decoration: none;
-  color: var(--primary);
-  font-size: 1.2em;
-
-  &:hover {
-    color: var(--accent);
-  }
-}
-
-/* Legacy nav color (if needed) */
-nav {
-  color: var(--nav-color, #1A1405); /* Falls back to #1A1405 if --nav-color undefined */
-}
-
-p {
-  font-size: var(--paragraph-size);
-}
-  &:hover {
-    color: var(--accent);
-  }
-}
-
-/* Legacy nav color (if needed) */
-nav {
-  color: var(--nav-color, #1A1405); /* Falls back to #1A1405 if --nav-color undefined */
-}
-
-p {
-  font-size: $paragraph-size;
-}
-
-header {
-  padding: 50px 0;
-}
-
-// Add these to improve readability
-.post-content {
-  line-height: 1.6;
-  
-  h2, h3, h4 {
-    margin-top: 1.5em;
-    scroll-margin-top: 1em; // for anchor links
+   * {
+    font-family: var(--font);
   }
   
-  img {
+  html, body {
+    height: 100%;
+  }
+  
+  body {
+    background: var(--light);
+    color: var(--dark);
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--primary);
+    font-size: 1.2em;
+  
+    &:hover {
+      color: var(--accent);
+    }
+  }
+  
+  nav {
+    color: var(--nav-color, #1A1405);
+  }
+  
+  p {
+    font-size: var(--paragraph-size);
+  }
+  
+  header {
+    padding: 50px 0;
+  }
+  
+  /* ================
+     Layout Components
+     ================ */
+  .post-content {
+    line-height: 1.6;
+    margin-bottom: calc(var(--main-padding) * 3);
+    
+    h2, h3, h4 {
+      margin-top: 1.5em;
+      scroll-margin-top: 1em;
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5em auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  }
+  
+  .code-inline, code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    line-height: 1.4;
+    margin: 1em 0;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
     max-width: 100%;
-    height: auto;
+    overflow: auto;
+    padding: 1em 1.5em;
     display: block;
-    margin: 1.5em auto;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    word-wrap: break-word;
   }
-}
-
-// Improve code blocks
-.code-inline, code {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  line-height: 1.4;
-  margin: 1em 0;
-}
-
-// Better mobile menu
-@media only screen and (max-width: 40em) {
-  .trigger {
-    background: $nav-color;
-    padding: 1em;
+  
+  /* ================
+     Navigation
+     ================ */
+  nav {
+    float: right;
     
     a {
-      color: white;
-      padding: 0.5em 0;
+      margin-right: 30px;
       
-      &:hover {
-        color: $hover-link-color;
+      &:last-child {
+        margin-right: 0;
       }
     }
   }
-}
-
-nav {
-  float: right;
-}
-
-nav a {
-  margin-right: 30px;
-}
-/* ================
-   Post Styles
-   ================ */
-.main-post {
-  display: block;
-  background: var(--light);
-  border: 3px solid var(--mid);
-  height: auto;
-}
-
-a.main-post-title {
-  font-size: var(--main-titles-size);
-  padding: var(--main-padding) var(--main-padding) 0 var(--main-padding);
-  display: table-cell;
-  line-height: 1em;
-}
-
-.main-post span {
-  margin-left: var(--main-padding);
-  color: var(--dark);
-}
-
-.sub-posts span {
-  color: var(--dark);
-}
-
-.main-post p {
-  margin: var(--main-padding);
-  color: var(--dark);
-}
-
-.main-thumb {
-  width: auto;
-  height: 157px;
-  overflow: hidden;
-  margin-top: var(--main-padding);
-}
-
-.sub-thumb {
-  width: 124px;
-  height: 124px;
-  position: relative;
-  overflow: hidden;
-  border-radius: 50%;
-  background-position: center;
-  background-color: white;
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin-bottom: 20px;
-}
-
-a.sub-post-title {
-  font-size: var(--main-titles-size);
-  display: block;
-  line-height: 1em;
-}
-
-.sub-posts {
-  margin-bottom: var(--main-padding);
-}
-
-a.sub-post-title {
-  font-size: $main-titles-size;
-  display: block;
-  line-height: $main-titles-leading;
-}
-
-.sub-posts {
-  margin-bottom: $main-padding;
-}
-
-.ad {
-  text-align: center;
-  margin-bottom: $main-padding * 2;
-}
-
-.pagination {
-  clear: both;
-  display: block;
-  text-align: center;
-}
-
-footer {
-  background-color: $footer-color;
-  min-height: 160px;
-}
-
-ul#social-links {
-  list-style-type: none;
-  margin: 0;
-  float: right;
-}
-
-ul#social-links li {
-  display: inline;
-  float: left;
-  margin: $main-padding * 2 30px 0 0;
-}
-
-a.previous,
-a.next {
-  font-weight: bold;
-  margin: $main-padding * 2 $main-padding $main-padding * 2 0;
-  display: inline-block;
-  background: $accent-color-1;
-  padding: $main-padding;
-}
-
-#footer-logo {
-  width: 40%;
-  margin-top: $main-padding * 2;
-  margin-left: $main-padding * 2;
-}
-
-h1.post-title {
-  font-size: $post-title-size;
-  font-weight: 300;
-  line-height: $main-titles-leading;
-  margin-bottom: 0;
-}
-
-img#main-img {
-  display: inline;
-  float: left;
-  padding: 0 $main-padding $main-padding 0;
-}
-
-.post-content {
-  margin-bottom: $main-padding * 3;
-}
-
-.sidebar-ad {
-  margin-top: $main-padding * 2;
-}
-
-.post-meta {
-  margin-top: 0;
-}
-
-@media only screen and (max-width: 64.063em) {
-  a.main-post-title,
-  a.sub-post-title {
-    font-size: $main-titles-size-m;
-    line-height: $main-titles-leading;
-  }
-
-  .sub-posts {
-    text-align: center;
-  }
-
-  .sub-thumb {
-    margin: 0 auto $main-padding auto;
-  }
-}
-
-@media only screen and (max-width: 40em) {
-  .main-post {
-    text-align: center;
-    margin-bottom: $main-padding;
-  }
-
-  p {
-    font-size: 1em;
-  }
-
-  a.menu-icon {
-    display: inline;
-  }
-
-  .trigger {
+  
+  .menu-icon {
     display: none;
-    width: 100%;
-    margin-top: $main-padding;
   }
-
-  nav {
+  
+  /* ================
+     Post Styles
+     ================ */
+  .main-post {
     display: block;
-    clear: both;
-    width: 100%;
-    text-align: right;
-    margin-top: -45px;
+    background: var(--light);
+    border: 3px solid var(--mid);
+    height: auto;
   }
-
-  .trigger a {
+  
+  a.main-post-title {
+    font-size: var(--main-titles-size);
+    padding: var(--main-padding) var(--main-padding) 0 var(--main-padding);
+    display: table-cell;
+    line-height: 1em;
+  }
+  
+  .main-post span {
+    margin-left: var(--main-padding);
+    color: var(--dark);
+  }
+  
+  .main-post p {
+    margin: var(--main-padding);
+    color: var(--dark);
+  }
+  
+  .main-thumb {
+    width: auto;
+    height: 157px;
+    overflow: hidden;
+    margin-top: var(--main-padding);
+  }
+  
+  .sub-thumb {
+    width: 124px;
+    height: 124px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    background-position: center;
+    background-color: white;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-bottom: var(--main-padding);
+  }
+  
+  a.sub-post-title {
+    font-size: var(--main-titles-size);
     display: block;
-    width: 100%;
-    border-bottom: 1px solid $footer-color;
-    margin-right: -$main-padding;
-    padding: $main-padding / 2 0;
-    text-align: left;
+    line-height: 1em;
   }
-}
-
-@media only screen and (min-width: 40em) {
-  .trigger {
-    display: block !important;
+  
+  .sub-posts {
+    margin-bottom: var(--main-padding);
   }
-}
-
-.code-inline,
-code {
-  background: #f4f4f4;
-  border: 1px solid #ddd;
-  border-left: 3px solid #f36d33;
-  color: #666;
-  page-break-inside: avoid;
-  font-family: monospace;
-  font-size: 15px;
-  line-height: 1.6;
-  margin-bottom: 1.6em;
-  max-width: 100%;
-  overflow: auto;
-  padding: 1em 1.5em;
-  display: block;
-  word-wrap: break-word;
-}
+  
+  /* ================
+     Footer & Misc
+     ================ */
+  footer {
+    background-color: var(--light);
+    min-height: 160px;
+  }
+  
+  ul#social-links {
+    list-style-type: none;
+    margin: 0;
+    float: right;
+    
+    li {
+      display: inline;
+      float: left;
+      margin: calc(var(--main-padding) * 2) 30px 0 0;
+    }
+  }
+  
+  a.previous,
+  a.next {
+    font-weight: bold;
+    margin: calc(var(--main-padding) * 2) var(--main-padding) calc(var(--main-padding) * 2) 0;
+    display: inline-block;
+    background: var(--light);
+    padding: var(--main-padding);
+  }
+  
+  #footer-logo {
+    width: 40%;
+    margin-top: calc(var(--main-padding) * 2);
+    margin-left: calc(var(--main-padding) * 2);
+  }
+  
+  h1.post-title {
+    font-size: var(--post-title-size);
+    font-weight: 300;
+    line-height: 1em;
+    margin-bottom: 0;
+  }
+  
+  img#main-img {
+    display: inline;
+    float: left;
+    padding: 0 var(--main-padding) var(--main-padding) 0;
+  }
+  
+  .sidebar-ad {
+    margin-top: calc(var(--main-padding) * 2);
+  }
+  
+  /* ================
+     Responsive
+     ================ */
+  @media only screen and (max-width: 64.063em) {
+    a.main-post-title,
+    a.sub-post-title {
+      font-size: var(--main-titles-size-m);
+    }
+  
+    .sub-posts {
+      text-align: center;
+    }
+  
+    .sub-thumb {
+      margin: 0 auto var(--main-padding) auto;
+    }
+  }
+  
+  @media only screen and (max-width: 40em) {
+    .main-post {
+      text-align: center;
+      margin-bottom: var(--main-padding);
+    }
+  
+    .trigger {
+      display: none;
+      width: 100%;
+      margin-top: var(--main-padding);
+      background: var(--dark);
+      
+      a {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid var(--light);
+        margin-right: calc(-1 * var(--main-padding));
+        padding: calc(var(--main-padding) / 2) 0;
+        text-align: left;
+        color: white;
+        
+        &:hover {
+          color: var(--accent);
+        }
+      }
+    }
+  
+    nav {
+      display: block;
+      clear: both;
+      width: 100%;
+      text-align: right;
+      margin-top: -45px;
+    }
+  }
+  
+  @media only screen and (min-width: 40em) {
+    .trigger {
+      display: block !important;
+    }
+  }
+  
+  /* ================
+     Grid System
+     ================ */
 
 .grid-xe {
   display: -webkit-box;
