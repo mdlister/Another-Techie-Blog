@@ -1,18 +1,18 @@
 
 
-$font: Roboto;
+// _layout.scss
 
-$main-titles-size: 2.2em;
-$main-titles-leading: 1em;
-$main-titles-size-m: 1.5em;
-$paragraph-size: 1.1em;
-$post-title-size: 3.2em;
+/* ================
+   CSS Variables
+   ================ */
+:root {
+  // These will be injected via head.html
+  --font: 'Roboto', sans-serif;
 
-$main-padding: 20px;
-$sections-margin: 50px;
-
+  // Sizing
+  --main-titles-size: 2.2rem;
 * {
-  font-family: $font;
+  font-family: var(--font);
 }
 
 html,
@@ -30,6 +30,19 @@ a {
   color: var(--primary);
   font-size: 1.2em;
 
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+/* Legacy nav color (if needed) */
+nav {
+  color: var(--nav-color, #1A1405); /* Falls back to #1A1405 if --nav-color undefined */
+}
+
+p {
+  font-size: var(--paragraph-size);
+}
   &:hover {
     color: var(--accent);
   }
@@ -98,52 +111,42 @@ nav {
 nav a {
   margin-right: 30px;
 }
-
-nav a:last-child {
-  margin-right: 0;
-}
-
-.menu-icon {
-  display: none;
-}
-
-.sections {
-  margin: $sections-margin auto;
-}
-
+/* ================
+   Post Styles
+   ================ */
 .main-post {
   display: block;
-  background: $accent-color-1;
-  border: 3px solid $accent-color-2;
+  background: var(--light);
+  border: 3px solid var(--mid);
   height: auto;
 }
 
 a.main-post-title {
-  font-size: $main-titles-size;
-  padding: $main-padding $main-padding 0 $main-padding;
+  font-size: var(--main-titles-size);
+  padding: var(--main-padding) var(--main-padding) 0 var(--main-padding);
   display: table-cell;
-  line-height: $main-titles-leading;
+  line-height: 1em;
 }
 
 .main-post span {
-  margin-left: $main-padding;
-  color: $secondary-font-color;
+  margin-left: var(--main-padding);
+  color: var(--dark);
 }
 
 .sub-posts span {
-  color: $secondary-font-color;
+  color: var(--dark);
 }
 
 .main-post p {
-  margin: $main-padding;
-  color: black;
+  margin: var(--main-padding);
+  color: var(--dark);
 }
 
 .main-thumb {
   width: auto;
   height: 157px;
   overflow: hidden;
-  margin-top: $main-padding;
+  margin-top: var(--main-padding);
 }
 
 .sub-thumb {
@@ -157,6 +160,16 @@ a.main-post-title {
   background-repeat: no-repeat;
   background-size: contain;
   margin-bottom: 20px;
+}
+
+a.sub-post-title {
+  font-size: var(--main-titles-size);
+  display: block;
+  line-height: 1em;
+}
+
+.sub-posts {
+  margin-bottom: var(--main-padding);
 }
 
 a.sub-post-title {
