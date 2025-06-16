@@ -20,8 +20,6 @@ tags:
 ---
 
 
-# Fixing “This device belongs to your organisation name” Message on Fully Managed Android Devices in Intune
-
 While testing **Intune Android device enrolment**, I encountered something unexpected: once a device was fully enrolled, the lock screen displayed the message:
 
 > **“This device belongs to your organisation name”**
