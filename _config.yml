@@ -26,6 +26,10 @@ colors:
   dark: "#37393A"
   mid: "#C7D3DD"
 
+  sass:
+  sass_dir: _sass
+  style: compressed
+
 # seo
 plugins:
   - jekyll-seo-tag
