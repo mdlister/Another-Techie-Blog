@@ -42,6 +42,7 @@ twitter:
 
 # build settings
 theme: jekyll-theme-midnight
+remote_theme: "" 
 show_downloads: false
 
 permalink: /:slug/

@@ -1,10 +1,4 @@
-:root {
-  --primary: {{ site.colors.primary }};
-  --accent: {{ site.colors.accent }};
-  --light: {{ site.colors.light }};
-  --mid: {{ site.colors.mid }};
-  --dark: {{ site.colors.dark }};
-}
+
 
 $font: Roboto;
 
@@ -39,6 +33,11 @@ a {
   &:hover {
     color: var(--accent);
   }
+}
+
+/* Legacy nav color (if needed) */
+nav {
+  color: var(--nav-color, #1A1405); /* Falls back to #1A1405 if --nav-color undefined */
 }
 
 p {
