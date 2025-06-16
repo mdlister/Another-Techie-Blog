@@ -2,5 +2,11 @@
 
 ---
 
-// Import your custom styles
+@charset "utf-8";
+
+// Import Foundation first
+@import "foundation";
+
+// Then your custom styles
 @import "layout";
+
