@@ -18,12 +18,20 @@ social:
     - https://facebook.com/mdlister
     - https://twitter.com/mdlister
 
+# Brand Colors
+colors:
+  primary: "#77B6EA"
+  accent: "#EFBA31"
+  light: "#E8EEF2"
+  dark: "#37393A"
+  mid: "#C7D3DD"
 
 # seo
 plugins:
   - jekyll-seo-tag
   - jekyll-feed
   - jekyll-paginate
+  - jekyll-sass-converter  # Required for SCSS variables
 
 paginate: 4
 paginate_path: "/page:num/"

@@ -1,9 +1,9 @@
 :root {
-  --primary: #77B6EA;       // Main brand blue
-  --accent: #EFBA31;        // Highlight yellow
-  --light: #E8EEF2;         // Background
-  --mid: #C7D3DD;           // Borders/secondary
-  --dark: #37393A;          // Text
+  --primary: {{ site.colors.primary }};
+  --accent: {{ site.colors.accent }};
+  --light: {{ site.colors.light }};
+  --mid: {{ site.colors.mid }};
+  --dark: {{ site.colors.dark }};
 }
 
 $font: Roboto;
