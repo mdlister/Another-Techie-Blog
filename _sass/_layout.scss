@@ -1,11 +1,12 @@
-$font: Roboto;
-$nav-color: #1a1405;
-$hover-link-color: #85671b;
-$secondary-font-color: #707070;
+:root {
+  --primary: #77B6EA;       // Main brand blue
+  --accent: #EFBA31;        // Highlight yellow
+  --light: #E8EEF2;         // Background
+  --mid: #C7D3DD;           // Borders/secondary
+  --dark: #37393A;          // Text
+}
 
-$accent-color-1: #ebebeb;
-$accent-color-2: #ccd8db;
-$footer-color: #fae8ba;
+$font: Roboto;
 
 $main-titles-size: 2.2em;
 $main-titles-leading: 1em;
@@ -26,34 +27,18 @@ body {
 }
 
 body {
-  background: #efba31; /* Old browsers */
-  background: -moz-linear-gradient(
-    top,
-    #efba31 12%,
-    #f4d176 59%
-  ); /* FF3.6-15 */
-  background: -webkit-linear-gradient(
-    top,
-    #efba31 12%,
-    #f4d176 59%
-  ); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(
-    to bottom,
-    #efba31 12%,
-    #f4d176 59%
-  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#EFBA31', endColorstr='#f4d176',GradientType=0 ); /* IE6-9 */
-  background-attachment: fixed;
+  background: var(--light);
+  color: var(--dark);
 }
 
 a {
   text-decoration: none;
-  color: $nav-color;
+  color: var(--primary);
   font-size: 1.2em;
-}
 
-a:hover {
-  color: $hover-link-color;
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 p {
@@ -62,6 +47,49 @@ p {
 
 header {
   padding: 50px 0;
+}
+
+// Add these to improve readability
+.post-content {
+  line-height: 1.6;
+  
+  h2, h3, h4 {
+    margin-top: 1.5em;
+    scroll-margin-top: 1em; // for anchor links
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5em auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+}
+
+// Improve code blocks
+.code-inline, code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  line-height: 1.4;
+  margin: 1em 0;
+}
+
+// Better mobile menu
+@media only screen and (max-width: 40em) {
+  .trigger {
+    background: $nav-color;
+    padding: 1em;
+    
+    a {
+      color: white;
+      padding: 0.5em 0;
+      
+      &:hover {
+        color: $hover-link-color;
+      }
+    }
+  }
 }
 
 nav {
