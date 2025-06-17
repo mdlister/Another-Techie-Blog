@@ -1,26 +1,53 @@
-<header>
-
-    <div class="grid-x">
-      <div class="cell medium-6">
-        <a class="site-title" href="{{ site.baseurl }}/"><img src="/images/logo.png" /></a>
-      </div>
-  
-      <div class="cell medium-6">
-      <nav class="site-nav">
-        <a href="#" class="menu-icon">
-          <img src="/images/menu.png" />
-        </a>
-  
-        <div class="trigger">
-            {% for my_page in site.pages %}
-              {% if my_page.nav  == true %}
-              <a class="page-link" href="{{ my_page.url | prepend: site.baseurl }}">{{ my_page.title }}</a>
-              {% endif %}
-            {% endfor %}
+<!-- Main Header -->
+<div data-sticky-container style="margin-bottom: 4em">
+  <header class="site-header" data-sticky data-options="marginTop:0; stickyOn:small;">
+    <div class="grid-container">
+      <div class="grid-x grid-margin-x align-middle">
+        <!-- Logo -->
+        <div class="cell small-8 medium-3">
+          <a href="/" class="site-logo">
+            <span class="show-for-sr">Another Techie Blog</span>
+            <img src="/images/Logo.png" alt="Logo for Another Tech Blog in Navigation" width="180" height="40">
+          </a>
         </div>
         
-      </nav>
+        <!-- Mobile Menu Toggle - REQUIRED FOR FOUNDATION MOBILE MENU -->
+        <div class="cell small-4 show-for-medium-only">
+          <button class="menu-icon" type="button" 
+                  data-toggle="mobile-menu" 
+                  aria-label="Toggle menu"
+                  aria-expanded="false"
+                  aria-controls="mobile-menu"></button>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <div class="cell medium-12 large-9">
+          <nav class="desktop-navigation" role="navigation" aria-label="Main navigation">
+            <ul class="dropdown menu align-right" data-dropdown-menu>
+              {% if site.data.navigation %}
+                {% for item in site.data.navigation %}
+                  <li{% if page.url == item.link %} class="active"{% endif %}>
+                    <a href="{{ item.link | default: '#' }}" {% if item.subpages %}aria-haspopup="true"{% endif %}>
+                      {{ item.name | default: 'Unnamed Item' }}
+                    </a>
+                    {% if item.subpages %}
+                      <ul class="menu vertical">
+                        {% for subitem in item.subpages %}
+                          <li{% if subitem.featured %} class="featured"{% endif %}>
+                            <a href="{{ subitem.link }}">{{ subitem.name }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              {% else %}
+                <li><a href="#">No navigation items available</a></li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
-  
   </header>
+</div>

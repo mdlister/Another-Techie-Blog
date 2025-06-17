@@ -1,0 +1,42 @@
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Jekyll-specific files
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Node modules (if using npm/yarn)
+node_modules/
+
+# Bundler dependencies
+vendor/bundle/
+.bundle/
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.pid
+*.seed
+*.old
+
+# Generated files
+Gemfile.lock
+yarn.lock
+package-lock.json
+
+# IDE-specific files
+.vscode/
+.idea/
+*.iml
+
+# Other
+.env
