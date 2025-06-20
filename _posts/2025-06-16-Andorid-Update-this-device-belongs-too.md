@@ -1,8 +1,8 @@
 ---
 layout: post
 comments: true
-thumb: Microsoft-Intune.jpg
-smallthumb: Intune
+thumb: Android-This-Device-Belongs-to-Your-Organisation-thumb.jpg
+smallthumb: intune
 title: Fixing "This Device Belongs to Your Organisation" Message on Intune Android Devices
 tagline: Resolve unexpected lock screen footers on fully managed Intune Android Enterprise devices
 slug: fix-intune-android-this-device-belongs-to
@@ -20,90 +20,106 @@ tags:
 ---
 
 
-While testing **Intune Android device enrolment**, I encountered something unexpected: once a device was fully enrolled, the lock screen displayed the message:
+
+## Removing “This device belongs to your organisation name” from Android Lock Screens in Intune
+
+While testing **Android device enrolment with Intune**, I noticed something odd: once a device was fully enrolled, its lock screen showed this message:
 
 > **“This device belongs to your organisation name”**
 
-At first, I assumed this was being set via **Device Configuration Profiles** in Intune, using the lock screen message setting:
+At first, I assumed this was being pushed via a **Device Configuration Profile**, using the lock screen message setting:
 
 ![image.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/image-1411606f-9966-458c-8bc3-ed654aa706dc.png)
 
-However, this wasn’t the cause. After diving deeper into Microsoft’s documentation, I discovered the following:
+Turns out, that wasn’t it.
+
+After digging into the docs, I came across this explanation:
 
 > _"By default, the OEM default messages are shown. When you deploy a custom message using Intune, the Intune default message is also deployed. If you don't enter a custom message for the device's default language, then the Intune default message is automatically shown."_  
 > [Corporate-owned Android Enterprise device restriction settings in Microsoft Intune | Microsoft Learn](https://learn.microsoft.com/en-us/intune/intune-service/configuration/device-restrictions-android-for-work?WT.mc_id=Portal-Microsoft_Intune_DeviceSettings)
 
-At this point, I suspected **Samsung Knox** (as the OEM) might be the source — but no available settings allowed me to control this message.
+Thinking it might be related to **Samsung Knox** (the OEM), I looked there next — but there were no options to edit or disable this message.
 
 ---
 
-## ✅ How I Removed the “This device belongs to your organisation name” Lock Screen Message
+## The Real Reason This Message Appears
 
-The fix turned out to be deleting and recreating the **Managed Google Play connection** in Intune.
+After speaking with Microsoft support, I learned this behaviour is **by design**.
+
+When you connect Intune to **Managed Google Play**, you’re asked to provide an **organisation name**. If the device is enrolled as **Fully Managed**, Android displays that name on the lock screen. This isn’t something configurable through Intune or the OEM — it’s baked into the Android Enterprise setup.
+
+Officially, there’s no Microsoft-supported way to remove or change this message after setup.
 
 ---
 
-### Step 1: Remove the Organisation from Google Managed Play
+## Disclaimer About the Workaround
 
-Visit: [https://play.google.com/work/adminsettings](https://play.google.com/work/adminsettings)
+You *can* work around this behaviour — but it’s worth noting that Microsoft doesn’t recommend or support this approach. 
 
-Remove the organisation:
+So proceed with caution.
 
-![Screenshot 2025-06-13 102828.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20102828-e4210e83-c4d6-4ac6-99ed-1e6db0c12920.png)  
-![Screenshot 2025-06-13 102838.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20102838-5aa62784-5a73-42b2-8fc4-b472dacd486e.png)  
-![Screenshot 2025-06-13 103551.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103551-f9747e8a-c6a8-4328-a384-ed196f3c966a.png)
+---
 
-Once the organisation is deleted, proceed to Intune.
+## How to Remove the Lock Screen Message Anyway
+
+This workaround involves **disconnecting** and **reconnecting** Managed Google Play, this time **without entering an organisation name** or in my example renaming it to something more generic.
+
+---
+
+### Step 1: Delete Your Organisation in Google Managed Play
+
+Go to: [https://play.google.com/work/adminsettings](https://play.google.com/work/adminsettings)
+
+Remove your organisation:
+
+![Screenshot 1](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20102828-e4210e83-c4d6-4ac6-99ed-1e6db0c12920.png)  
+![Screenshot 2](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20102838-5aa62784-5a73-42b2-8fc4-b472dacd486e.png)  
+![Screenshot 3](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103551-f9747e8a-c6a8-4328-a384-ed196f3c966a.png)
 
 ---
 
 ### Step 2: Disconnect Google Managed Play from Intune
 
-In Intune, go to:  
+In Intune:  
 **Tenant Administration > Connectors and Tokens > Managed Google Play**
 
-![Screenshot 2025-06-13 103828.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103828-6a7ceda7-c8d6-433c-8e5e-d1878bae6d7f.png)
+Click **Disconnect**:
 
-Click **Disconnect** and confirm:
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103828-6a7ceda7-c8d6-433c-8e5e-d1878bae6d7f.png)
 
-![Screenshot 2025-06-13 103909.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103909-ea07f292-7172-43e8-bc5d-a15c717ded67.png)
+Confirm disconnection:
 
-> ⚠️ If you have corporate-owned, personally enabled (COPE) Android devices enrolled, you must remove them first:
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103909-ea07f292-7172-43e8-bc5d-a15c717ded67.png)
 
-![Screenshot 2025-06-13 103949.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103949-f90aedc1-f36f-4d38-a87c-dccce2709b7c.png)  
-![Screenshot 2025-06-13 104014.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104014-8ef599c1-997c-4795-808b-8d43701f418f.png)
+> If you have devices enrolled as **COPE (Corporate-owned, personally enabled)** or **Fully Managed**, remove them first:
 
-Removing the work profile will wipe corporate data from the device.  
-Fully managed devices will factory reset:
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103949-f90aedc1-f36f-4d38-a87c-dccce2709b7c.png)  
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104014-8ef599c1-997c-4795-808b-8d43701f418f.png)
 
-![Screenshot 2025-06-13 104242.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104242-b162bff1-90a2-4a60-b40e-a6103f73d764.png)
+- Work profiles are removed  
+- Fully managed devices will **factory reset**
+
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104242-b162bff1-90a2-4a60-b40e-a6103f73d764.png)
 
 ---
 
-### Step 3: Reconnect Google Managed Play
+### Step 3: Reconnect Google Managed Play — Without a Name
 
-With the connection removed, run through the setup wizard again:
+Run through the setup wizard again:
 
-![Screenshot 2025-06-13 104256.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104256-28f846d8-aa4a-4db7-8106-97449f38b3e4.png)
+![Wizard Start](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104256-28f846d8-aa4a-4db7-8106-97449f38b3e4.png)  
+![Select Android](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104333-7c709da1-3806-4449-beb6-13de7f74311d.png)  
+![Get Started](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104346-6b36dddd-b954-4f7c-9035-0e684f3c4acb.png)
 
-Choose **Android Only**:  
-![Screenshot 2025-06-13 104333.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104333-7c709da1-3806-4449-beb6-13de7f74311d.png)
+**Leave the organisation name blank** if you don't want it to appear on devices:
 
-Click **Get Started**:  
-![Screenshot 2025-06-13 104346.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104346-6b36dddd-b954-4f7c-9035-0e684f3c4acb.png)
+![Org Name Step](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104409-a51940a8-4607-4bd6-baff-cf664f6eb408.png)
 
-Update your **organisation name** — this is the text that appears in *“This device belongs to your organisation name”* on the lock screen:
+Complete the wizard:
 
-![Screenshot 2025-06-13 104409.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104409-a51940a8-4607-4bd6-baff-cf664f6eb408.png)
-
-Enter your **data protection** info and agree to GDPR terms:
-
-![Screenshot 2025-06-13 104420.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104420-13aa7ddd-d2df-495d-a405-4f15d89fda9e.png)
-
-Click **Complete Setup**:
-
-![Screenshot 2025-06-13 104502.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104502-88fdc1e9-2b01-46dc-bea1-5f1a917050b1.png)  
-![Screenshot 2025-06-13 104523.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104523-c4ab1810-04bd-4d04-91b0-dad3be229849.png)
+![GDPR](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104420-13aa7ddd-d2df-495d-a405-4f15d89fda9e.png)  
+![Complete](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104502-88fdc1e9-2b01-46dc-bea1-5f1a917050b1.png)  
+![Done](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104523-c4ab1810-04bd-4d04-91b0-dad3be229849.png)
 
 ---
 
@@ -112,26 +128,26 @@ Click **Complete Setup**:
 Go to:  
 **Devices > Android > Enrolment > Corporate-owned, fully managed user devices**
 
-Create a new token:
+Generate a new token:
 
-![image.png](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/image-0e75f655-3748-4064-9b67-6a0bef9b74f9.png)
+![Token Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/image-0e75f655-3748-4064-9b67-6a0bef9b74f9.png)
 
-> 🔁 If you're using Samsung Knox Mobile Enrolment, you'll need to add this new token there as well.
+> If you're using **Samsung Knox Mobile Enrolment**, update your configuration to use the new token.
 
 ---
 
-### Step 5: Re-approve Apps in Managed Google Play
+### Step 5: Re-Approve Apps in Managed Google Play
 
-Since the connection has changed, any previously approved apps will need to be **added again** from the new Managed Google Play store.
+The new connection wipes out your previous approvals. Re-add apps manually from the new Managed Google Play store.
 
 ---
 
 ## Final Thoughts
 
-If your **Android devices enrolled via Intune** are showing the message _“This device belongs to your organisation name”_, and it’s not set by a configuration profile, it’s likely due to the **default Intune message** shown when no custom language-specific message is defined.
+If your **Intune-enrolled Android devices** are showing the message _“This device belongs to your organisation name”_, and you didn’t configure it yourself — this is likely due to the default behaviour when linking to **Managed Google Play**.
 
-By **resetting your Google Managed Play Store connection**, you can control and customise this message — or remove it entirely.
+While not officially supported, **resetting the connection and omitting the organisation name** gives you control over the lock screen message.
 
 ---
 
-*Hope this helps someone out there — it wasn’t immediately clear to me!*
+*Hope this helps someone! It wasn’t obvious at first — and definitely took some digging to figure out.*

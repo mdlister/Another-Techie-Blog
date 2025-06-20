@@ -1,13 +1,13 @@
 ---
 layout: post
 comments: true
-thumb: Screenshot 2024-05-16 at 23.29.40.png
-smallthumb: MicrosoftPlaces
-title: Introducing Microsoft Places
-tagline: A first look at Microsoft Places
-slug: Introducing-Microsoft-Places
+thumb: Microsoft.Graph_thumbnail.jpg
+smallthumb: msgraph
+title: Migrating away from MSOnline Powershell Module
+tagline: Migrating away from MSOnline Powershell Module
+slug: Migrating-away-from-MSOnline-Powershell-Module
 modified: 2024-05-16
-description: A first look at the new Microsoft Places feature
+description: Embracing microsoft graph
 tags:
   - Microsoft
   - Office365

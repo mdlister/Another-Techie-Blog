@@ -224,7 +224,7 @@
     }
     
     img {
-      max-width: 100%;
+      max-width: 70%;
       height: auto;
       display: block;
       margin: 1.5em auto;
@@ -401,14 +401,10 @@
   }
   
   img#main-img {
-    display: inline;
-    float: left;
     padding: 0 var(--main-padding) var(--main-padding) 0;
   }
-  
-  .sidebar-ad {
-    margin-top: calc(var(--main-padding) * 2);
-  }
+
+
   
   /* ================
      Responsive
@@ -546,6 +542,11 @@ a {
   &:hover {
     color: var(--accent);
   }
+}
+
+.img-block {
+  display: block;
+  margin: 0 auto 1em auto;
 }
 
 .button {
