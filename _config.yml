@@ -37,7 +37,7 @@ plugins:
   - jekyll-paginate
   - jekyll-sass-converter  # Required for SCSS variables
 
-paginate: 4
+paginate: 10
 paginate_path: "/page:num/"
 
 twitter:
