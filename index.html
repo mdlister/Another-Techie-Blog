@@ -27,7 +27,7 @@ nav: true
 
   <div class="grid-x sections">
     <div class="cell large-12">
-      {% for post in paginator.posts limit: 4 %}
+      {% for post in paginator.posts offset: 1 limit: 4 %}
           <div class="grid-x sub-posts">
             <div class="cell large-2">
               <a href="{{ post.url | prepend: site.baseurl }}">
