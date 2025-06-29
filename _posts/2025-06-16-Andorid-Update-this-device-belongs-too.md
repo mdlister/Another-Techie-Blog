@@ -1,7 +1,7 @@
 ---
 layout: post
 comments: true
-thumb: Android-This-Device-Belongs-to-Your-Organisation-thumb.jpg
+thumb: Android-This-Device-Belongs-to-Your-Organisation.jpg
 smallthumb: intune
 title: Fixing "This Device Belongs to Your Organisation" Message on Intune Android Devices
 tagline: Resolve unexpected lock screen footers on fully managed Intune Android Enterprise devices
