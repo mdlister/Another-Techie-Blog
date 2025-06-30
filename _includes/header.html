@@ -26,7 +26,7 @@
             <ul class="dropdown menu align-right" data-dropdown-menu>
               {% if site.data.navigation %}
                 {% for item in site.data.navigation %}
-                  <li{% if page.url == item.link %} class="active"{% endif %}>
+                <li{% if page.url | remove: '/' == item.link | remove: '/' %} class="active"{% endif %}>
                     <a href="{{ item.link | default: '#' }}" {% if item.subpages %}aria-haspopup="true"{% endif %}>
                       {{ item.name | default: 'Unnamed Item' }}
                     </a>
