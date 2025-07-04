@@ -15,7 +15,90 @@ tags:
   - Microsoft Places
 ---
 
-# Setting Up Microsoft Teams Work Locations: A Practical Guide
+
+# Microsoft Teams: Automatic Work Location Detection (Office 365 Roadmap Feature 488800)
+
+Microsoft is introducing **automatic work location detection** for Teams and Microsoft Places as part of the [Office 365 Roadmap (Feature 488800)](https://www.microsoft.com/en-gb/microsoft-365/roadmap?filters=&searchterms=488800). This new capability helps organisations keep users' work locations up to date, making it easier to find colleagues, book desks, and streamline hybrid work experiences. The feature is rolling out in 2025 and is designed to work seamlessly with Microsoft Places and Teams.
+
+# What Is Automatic Work Location Detection?
+
+Automatic work location detection allows Teams to update a user's work location based on two main signals:
+
+- **Connection to a corporate wireless network (Wi-Fi SSID/BSSID)**
+- **Connection to a desk peripheral (such as a monitor or docking station) configured in Microsoft Places**
+
+When enabled, Teams can automatically set a user's location to "In the Office" or to a specific building, supporting features like desk booking, room reservations, and real-time presence in Microsoft Places.
+
+# Prerequisites
+
+Before enabling this feature, ensure the following:
+
+- You are a Microsoft Teams administrator (for Teams policies) and an Exchange administrator (for Wi-Fi settings).
+- Buildings and floors are configured in Microsoft Places.
+- Desk pools or individual desk accounts are set up in Microsoft Places.
+- Users must opt in and enable location sharing in their operating system and the Teams app. Admins cannot consent on behalf of users.
+
+See [Management prerequisites](https://learn.microsoft.com/en-us/microsoft-365/places/managementoverview) for more details.
+
+# How to Enable Automatic Work Location Detection
+
+## 1. Enable the Work Location Detection Policy in Teams
+
+First, create and assign a Teams work location detection policy. This policy enables the feature for selected users or groups.
+
+```powershell
+New-CsTeamsWorkLocationDetectionPolicy -Identity wld-enabled -EnableWorkLocationDetection $true
+Grant-CsTeamsWorkLocationDetectionPolicy -PolicyName wld-enabled -Identity user@yourdomain.com
+```
+
+For more details, see the [official documentation](https://learn.microsoft.com/en-us/powershell/module/teams/new-csteamsworklocationdetectionpolicy).
+
+## 2. Configure Detection via Wi-Fi (SSID/BSSID)
+
+To detect when users are in the office based on Wi-Fi, configure the SSID and (optionally) BSSID lists in Microsoft Places:
+
+**A. Set the SSID List:**
+```powershell
+Set-PlacesSettings -Collection Presence -WorkplaceWifiNetworkSSIDList 'Default:SSID-1;SSID-2'
+```
+This allows Teams to detect when a user is connected to a trusted office Wi-Fi network.
+
+**B. Map BSSIDs to Buildings (for building-level accuracy):**
+1. Create a CSV file with columns `BSSID` and `BuildingName`.
+2. Map and upload the BSSID list:
+```powershell
+Add-WifiDevices -Action MapBuildings -InputFilePath test-file.csv
+Add-WifiDevices -Action UploadEntries -InputFilePath test-file.csv -BuildingMappingFile mapping-file.csv
+```
+If only the SSID is configured, users' locations will show as "In the Office". With BSSID mapping, Teams can set the specific building.
+
+**Note:** As of July 2025, Wi-Fi-based detection is in preview and will be widely available soon.
+
+## 3. Enable Detection via Desk Peripherals (Microsoft Places)
+
+You can also enable automatic location detection when users connect to a configured desk peripheral (like a monitor or docking station) at a bookable desk:
+
+- Configure desk peripherals and associate them with desks in Microsoft Places. See [Configure desk peripherals](https://learn.microsoft.com/en-us/microsoft-365/places/configure-desk-peripherals).
+- When a user plugs into a configured peripheral, Teams will automatically update their work location to "In the Office" or to the specific building.
+
+Allow 24–48 hours for changes to propagate after configuration.
+
+# User Consent and Experience
+
+By default, users are opted out of automatic work location detection. When the policy is enabled, users are prompted to provide consent in the Teams desktop app (Windows or macOS). Admins cannot consent on behalf of users. Users must also enable location sharing in their OS and Teams app settings.
+
+For more, see [Manage location sharing in Microsoft Teams](https://support.microsoft.com/office/manage-location-sharing-in-microsoft-teams-583dd649-87fc-4b23-aed6-f4e2279297f9#id0ebbd=windows).
+
+# Best Practices and Next Steps
+
+- Inventory your Teams Rooms and Teams Panel devices using the [Get Peripheral Information script](https://learn.microsoft.com/en-us/microsoftteams/rooms/get-peripheral-information).
+- Ensure all office networks and desk peripherals are correctly configured in Microsoft Places.
+- Remind users to enable location sharing and consent in Teams.
+- For troubleshooting, allow up to 48 hours for new settings to take effect.
+
+# Conclusion
+
+Automatic work location detection in Microsoft Teams and Places is a powerful tool for hybrid workplaces. By leveraging Wi-Fi and desk peripherals, organisations can streamline desk booking, improve collaboration, and keep work locations up to date—making the modern office smarter and more connected.
 
 As businesses move towards more flexible and hybrid ways of working, knowing where employees are physically located becomes increasingly important—not just for booking desks, but for streamlining IT operations and enhancing collaboration. Microsoft Teams now supports the ability to define work locations using network-based detection policies, making it easier for organisations to integrate desk booking and workspace management tools like Microsoft Places.
 
