@@ -143,6 +143,7 @@ Let’s break it down into actionable steps.
 # Install module if you haven't already
 Install-Module -Name PowerShellGet -Force -AllowClobber
 Install-Module -Name MicrosoftTeams -Force
+Install-Module -Name MicrosoftPlaces -Force
 
 # Connect to Microsoft Teams
 Connect-MicrosoftTeams
@@ -154,13 +155,15 @@ Connect-MicrosoftTeams
 ```powershell
 New-CsTeamsWorkLocationDetectionPolicy `
   -Identity "LondonHQ" `
-  -IPRanges "192.168.0.0/24" `
-  -WiFiSSIDs "LondonHQ-WiFi" `
-  -NetworkDnsSuffixes "corp.contoso.com"
+  -EnableWorkLocationDetection $true
 ```
 ---
 
-This example defines your London headquarters based on its IP range, Wi-Fi SSID, and DNS suffix. You can define multiple policies for different offices or remote work hubs.
+This example defines your London headquarters Policy. You can define multiple policies for different offices or remote work hubs and then assign them to users. This feels a little disjointed currently as this setting appears to only be an ON or OFF setting and then the configuration is done via MS Places 
+
+```powershell
+Set-PlacesSettings -Collection Presence -WorkplaceWifiNetworkSSIDList 'Default:MyWifi-SSID-Name'
+```
 
 ---
 
