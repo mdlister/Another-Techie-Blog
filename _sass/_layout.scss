@@ -11,9 +11,11 @@
   }
   
   .post-content img {
-    max-width: 100%; // Full width on mobile
-    margin: 1.5rem auto;
-  }
+  max-width: 85%; /* Slightly narrower than full container */
+  border: 1px solid #e1e4e8; /* Subtle border */
+  background: white; /* For PNGs with transparency */
+  padding: 8px; /* Inner spacing */
+}
 }
 
 // _layout.scss
@@ -323,6 +325,21 @@ h3 {
   /* ================
      Better Code Blocks
      ================ */
+  .highlight {
+  background: #f8f9fa;
+  border: 1px solid #e1e4e8;
+  border-left: 4px solid var(--primary); // #77B6EA blue
+  border-radius: 0 4px 4px 0;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  
+  pre {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+}
   .code-inline {
     background: #f8f8f8;
     padding: 0.2em 0.4em;
@@ -333,7 +350,6 @@ h3 {
   background: var(--dark); // Using brand dark color
   color: #E8EEF2; // Light text for contrast
   border-left: 4px solid var(--accent); // Brand accent color
-  padding: 1rem;
   border-radius: 4px;
   overflow-x: auto;
 }
@@ -580,7 +596,15 @@ h1, h2, h3 {
 .post-content p {
   margin-bottom: 1.5rem;
 }
-
+.post-content {
+  p, ul, ol {
+    margin-bottom: 1.75rem; /* Slightly more than 1.5rem */
+  }
+  
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
 .sub-post-title {
   color: var(--dark);
   margin-bottom: 0.5rem;
@@ -702,7 +726,29 @@ nav a {
     margin-top: 1.5rem;
   }
 }
-
+/* Table Formatting */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+  
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  
+  td {
+    padding: 0.6rem;
+    border-bottom: 1px solid #e1e4e8;
+  }
+  
+  tr:nth-child(even) {
+    background: #f6f8fa;
+  }
+}
 /* ================
    Post Grid
    ================ */
@@ -831,6 +877,19 @@ nav a {
       background: var(--accent);
       transform: translateY(-2px);
     }
+  }
+}
+
+/* Add to _layout.scss */
+.note {
+  background: #f8f9fa;
+  border-left: 4px solid var(--accent);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+  
+  strong {
+    color: var(--accent);
   }
 }
 
