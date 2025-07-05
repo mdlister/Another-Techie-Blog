@@ -108,7 +108,11 @@ In this guide, we’ll walk you through how to configure Teams to recognise your
 
 ## What Is a Work Location Detection Policy?
 
-Microsoft has introduced a new PowerShell cmdlet: [`New-CsTeamsWorkLocationDetectionPolicy`](https://learn.microsoft.com/en-us/powershell/module/teams/new-csteamsworklocationdetectionpolicy?view=teams-ps). This allows administrators to define corporate network locations based on attributes like:
+Microsoft has introduced a new PowerShell cmdlet: 
+
+[`New-CsTeamsWorkLocationDetectionPolicy`](https://learn.microsoft.com/en-us/powershell/module/teams/new-csteamsworklocationdetectionpolicy?view=teams-ps). 
+
+This allows administrators to define corporate network locations based on attributes like:
 
 - **IP address ranges**
 - **Trusted Wi-Fi SSIDs**
