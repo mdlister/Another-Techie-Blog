@@ -325,21 +325,7 @@ h3 {
   /* ================
      Better Code Blocks
      ================ */
-  .highlight {
-  background: #f8f9fa;
-  border: 1px solid #e1e4e8;
-  border-left: 4px solid var(--primary); // #77B6EA blue
-  border-radius: 0 4px 4px 0;
-  padding: 1rem;
-  margin: 1.5rem 0;
-  overflow-x: auto;
   
-  pre {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-  }
-}
   .code-inline {
     background: #f8f8f8;
     padding: 0.2em 0.4em;
