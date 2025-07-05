@@ -39,7 +39,7 @@ body {
 
 /* NEW: Container for better content width */
 .content-container {
-  max-width: 720px; // Optimal reading width
+  max-width: 750px; // Optimal reading width
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -393,6 +393,7 @@ div.highlight {
   .nt { color: #EFBA31; } /* Parameters */
   .s2 { color: #E8EEF2; } /* Strings */
   .se { color: #EFBA31; } /* Escape chars */
+  .nx { color: #E8EEF2; } /* Strings */
 }
   
   /* ================
