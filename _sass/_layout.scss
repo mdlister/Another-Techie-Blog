@@ -323,21 +323,50 @@ h3 {
   }
 
   /* ================
-     Better Code Blocks
-     ================ */
+   Code Blocks - Fixed Version
+   ================ */
+div.highlight {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 0 4px 4px 0;
+  overflow: hidden; /* Keeps the accent bar contained */
   
-  .code-inline {
-    background: #f8f8f8;
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
+  /* Full-height accent bar */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--accent); /* Yellow #EFBA31 */
   }
-.code-inline, code {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  background: var(--dark); // Using brand dark color
-  color: #E8EEF2; // Light text for contrast
-  border-left: 4px solid var(--accent); // Brand accent color
-  border-radius: 4px;
-  overflow-x: auto;
+  
+  pre.highlight {
+    background: var(--dark); /* #37393A */
+    color: #E8EEF2;
+    padding: 1.25rem 1.5rem;
+    margin: 0;
+    overflow-x: auto;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    
+    code {
+      display: block;
+      background: transparent !important;
+    }
+  }
+}
+
+/* Inline code */
+.code-inline {
+  background: rgba(55,57,58,0.1);
+  color: var(--dark);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  border: 1px solid rgba(55,57,58,0.2);
 }
   
   /* ================
@@ -358,6 +387,13 @@ h3 {
   .menu-icon {
     display: none;
   }
+
+  .language-powershell {
+  .n { color: #77B6EA; } /* Command names */
+  .nt { color: #EFBA31; } /* Parameters */
+  .s2 { color: #E8EEF2; } /* Strings */
+  .se { color: #EFBA31; } /* Escape chars */
+}
   
   /* ================
      Post Styles
