@@ -39,7 +39,7 @@ body {
 
 /* NEW: Container for better content width */
 .content-container {
-  max-width: 750px; // Optimal reading width
+  max-width: 800px; // Optimal reading width
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -391,6 +391,7 @@ div.highlight {
   .language-powershell {
   .n { color: #77B6EA; } /* Command names */
   .nt { color: #EFBA31; } /* Parameters */
+  .s1 { color: #E8EEF2; } /* Strings */
   .s2 { color: #E8EEF2; } /* Strings */
   .se { color: #EFBA31; } /* Escape chars */
   .nx { color: #E8EEF2; } /* Strings */
