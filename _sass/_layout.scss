@@ -390,13 +390,14 @@ div.highlight {
 
   .language-powershell {
   .n { color: #77B6EA; } /* Command names */
+  .c { color: #77B6EA; } /* Comment names */
   .nt { color: #EFBA31; } /* Parameters */
   .s1 { color: #E8EEF2; } /* Strings */
   .s2 { color: #E8EEF2; } /* Strings */
   .se { color: #EFBA31; } /* Escape chars */
   .nx { color: #E8EEF2; } /* Strings */
-  .bp { color: #E8EEF2; } /* Strings */
-  .err { color: #E8EEF2; } /* Strings */
+  .bp { color: #E8EEF2; } /* Booleans */
+  .err { color: #E8EEF2; } /* @ Symbols */
 }
   
   /* ================
