@@ -362,7 +362,6 @@ div.highlight {
 /* Inline code */
 .code-inline {
   background: rgba(55,57,58,0.1);
-  color: var(--dark);
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-size: 0.9em;
@@ -395,6 +394,7 @@ div.highlight {
   .s2 { color: #E8EEF2; } /* Strings */
   .se { color: #EFBA31; } /* Escape chars */
   .nx { color: #E8EEF2; } /* Strings */
+  .bp { color: #E8EEF2; } /* Strings */
 }
   
   /* ================
