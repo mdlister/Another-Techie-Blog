@@ -1,30 +1,95 @@
+/* ================
+   Responsive Improvements
+   ================ */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .post-content img {
+    max-width: 100%; // Full width on mobile
+    margin: 1.5rem auto;
+  }
+}
+
 // _layout.scss
 
 /* ================
    Base Styles
    ================ */
-   * {
-    font-family: var(--font);
+* {
+  font-family: var(--font);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--light);
+  color: var(--dark);
+  line-height: var(--line-height);
+}
+
+/* NEW: Container for better content width */
+.content-container {
+  max-width: 720px; // Optimal reading width
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+  
+
+/* ================
+   Typography Improvements
+   ================ */
+h1, h2, h3 {
+  line-height: 1.3;
+  margin: 2rem 0 1rem;
+  color: var(--dark); // Stronger hierarchy
+}
+
+h1 {
+  font-size: 2.4rem;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: var(--primary); // Brand color for subheadings
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+.post-content {
+  line-height: 1.7; // Increased for better readability
+  margin-bottom: 3rem;
+  
+  p {
+    margin-bottom: 1.5rem;
   }
   
-  html, body {
-    height: 100%;
+  /* Improved image styling */
+  img {
+    max-width: 100%; // More responsive
+    height: auto;
+    display: block;
+    margin: 2rem auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.02);
+    }
   }
-  
-  body {
-      background: var(--light);
-      color: var(--dark);
-      line-height: var(--line-height);
-    }
-  
-  h1, h2, h3 {
-      line-height: 1.3;
-      margin-bottom: 1rem;
-    }
-  
-  .post-content p {
-      margin-bottom: 1.5rem;
-    }
+}
   
   .sub-post-title {
       color: var(--dark);
@@ -45,7 +110,16 @@
         color: var(--accent);
       }
       }
-      
+
+      /* ================
+         Post Meta Styling
+         ================ */
+      .post-meta {
+  color: var(--mid);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  display: block;
+}
       /* ================
          Button Styles
          ================ */
@@ -254,22 +328,15 @@
     padding: 0.2em 0.4em;
     border-radius: 3px;
   }
-  
-  .code-inline, code {
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    line-height: 1.4;
-    margin: 1em 0;
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-left: 3px solid var(--accent);
-    color: #666;
-    page-break-inside: avoid;
-    max-width: 100%;
-    overflow: auto;
-    padding: 1em 1.5em;
-    display: block;
-    word-wrap: break-word;
-  }
+.code-inline, code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  background: var(--dark); // Using brand dark color
+  color: #E8EEF2; // Light text for contrast
+  border-left: 4px solid var(--accent); // Brand accent color
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
   
   /* ================
      Navigation
