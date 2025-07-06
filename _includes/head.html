@@ -82,4 +82,43 @@
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
   <![endif]-->
+
+  <!-- Lightbox -->
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Get the lightbox elements
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-image');
+  const lightboxCaption = document.querySelector('.caption');
+  const closeBtn = document.querySelector('.close-lightbox');
+  
+  // Add click event to all post images
+  document.querySelectorAll('.post-content img').forEach(img => {
+    img.onclick = function() {
+      lightbox.style.display = 'block';
+      lightboxImg.src = this.src;
+      lightboxCaption.textContent = this.alt || '';
+    };
+  });
+  
+  // Close lightbox when clicking X
+  closeBtn.onclick = function() {
+    lightbox.style.display = 'none';
+  };
+  
+  // Close lightbox when clicking outside image
+  lightbox.onclick = function(e) {
+    if (e.target !== lightboxImg) {
+      lightbox.style.display = 'none';
+    }
+  };
+  
+  // Close with ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && lightbox.style.display === 'block') {
+      lightbox.style.display = 'none';
+    }
+  });
+});
+</script>
 </head>
