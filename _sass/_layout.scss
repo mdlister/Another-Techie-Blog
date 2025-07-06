@@ -26,6 +26,15 @@
     justify-content: flex-end;
     flex: 0 0 auto;
   }
+  /* Hide mobile menu toggle on desktop */
+  .show-for-medium-down {
+    display: flex !important;
+  }
+  @media (min-width: 769px) {
+    .show-for-medium-down {
+      display: none !important;
+    }
+  }
 }
 // _layout.scss
 
