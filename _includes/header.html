@@ -12,7 +12,7 @@
         </div>
         
         <!-- Mobile Menu Toggle - REQUIRED FOR FOUNDATION MOBILE MENU -->
-        <div class="cell small-4 show-for-medium-only">
+        <div class="cell small-4 show-for-small-only">
           <button class="menu-icon dark" type="button" 
                   data-toggle="offCanvas" 
                   aria-label="Toggle menu"
@@ -22,7 +22,7 @@
         
         <!-- Desktop Navigation -->
         <div class="cell medium-12 large-9">
-          <nav class="desktop-navigation" role="navigation" aria-label="Main navigation">
+          <nav class="desktop-navigation show-for-large" role="navigation" aria-label="Main navigation">
             <ul class="dropdown menu align-right" data-dropdown-menu>
               {% if site.data.navigation %}
                 {% for item in site.data.navigation %}
