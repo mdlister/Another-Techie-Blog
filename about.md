@@ -12,15 +12,21 @@ I started my full time IT journey back in 2006 with a university placement at Pr
 
 I’ve always found that the best solutions often come from blog posts written by people who’ve faced the same challenges. That’s what inspired me to create Another Techie Blog — a space to share what I’ve learned (and what I’m still learning) in the world of Microsoft technologies, Azure, Terraform, PowerShell, and beyond.
 
-What i've found frustating the most is the documentation that is out of date on the Microsoft site as there products change so frequently.
+What I've found frustrating the most is the documentation that is out of date on the Microsoft site, as their products change so frequently.
 
-What You’ll Find Here
-Step-by-step guides based on real-world scenarios at the time of writing
-Code samples and diagrams to make implementation easier
-Lessons learned from actual deployments — the good, the bad, and the fixable
+---
+
+### What You’ll Find Here
+
+- **Step-by-step guides** based on real-world scenarios at the time of writing
+- **Code samples and diagrams** to make implementation easier
+- **Lessons learned from actual deployments** — the good, the bad, and the fixable
+
 I write the kind of content I wish I’d found earlier in my career: approachable, practical, and focused on solving real problems. Whether you're just getting started or deep into your IT journey, I hope you’ll find something here that helps you move forward.
+
+---
 
 Let’s build better systems, automate smarter, and keep learning — together.
 
-Connect with me - https://www.linkedin.com/in/mdlister/
+**Connect with me:** [linkedin.com/in/mdlister](https://www.linkedin.com/in/mdlister/)
 
