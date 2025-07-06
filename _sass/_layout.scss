@@ -30,12 +30,29 @@
   .show-for-medium-down {
     display: flex !important;
   }
-  @media (min-width: 769px) {
-    .show-for-medium-down {
-      display: none !important;
-    }
+}
+
+@media (min-width: 769px) {
+  /* On desktop, reset header row to default grid/flex and hide mobile menu toggle */
+  .site-header .grid-x {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  .cell.small-8 {
+    display: block;
+    flex: none;
+    min-width: unset;
+  }
+  .cell.small-4 {
+    display: none !important;
+  }
+  .show-for-medium-down {
+    display: none !important;
   }
 }
+
 // _layout.scss
 
 /* ================
