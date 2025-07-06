@@ -13,11 +13,11 @@
         
         <!-- Mobile Menu Toggle - REQUIRED FOR FOUNDATION MOBILE MENU -->
         <div class="cell small-4 show-for-medium-only">
-          <button class="menu-icon" type="button" 
-                  data-toggle="mobile-menu" 
+          <button class="menu-icon dark" type="button" 
+                  data-toggle="offCanvas" 
                   aria-label="Toggle menu"
                   aria-expanded="false"
-                  aria-controls="mobile-menu"></button>
+                  aria-controls="offCanvas"></button>
         </div>
         
         <!-- Desktop Navigation -->
@@ -46,6 +46,35 @@
               {% endif %}
             </ul>
           </nav>
+        </div>
+
+        <!-- Mobile Menu Structure - Add this after your desktop navigation -->
+        <div class="off-canvas position-right" id="offCanvas" data-off-canvas>
+          <!-- Close button -->
+          <button class="close-button" aria-label="Close menu" type="button" data-close>
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <!-- Mobile Menu Content -->
+          <ul class="vertical menu">
+            {% if site.data.navigation %}
+              {% for item in site.data.navigation %}
+                <li{% if page.url == item.link %} class="active"{% endif %}>
+                  <a href="{{ item.link | default: '#' }}">{{ item.name | default: 'Unnamed Item' }}</a>
+                  {% if item.subpages %}
+                    <ul class="nested vertical menu">
+                      {% for subitem in item.subpages %}
+                        <li{% if subitem.featured %} class="featured"{% endif %}>
+                          <a href="{{ subitem.link }}">{{ subitem.name }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            {% else %}
+              <li><a href="#">No navigation items available</a></li>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </div>
