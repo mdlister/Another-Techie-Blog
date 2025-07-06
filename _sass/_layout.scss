@@ -1,4 +1,4 @@
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   /* Header logo/menu alignment fix for mobile */
   .site-header .grid-x {
     display: flex;
@@ -32,7 +32,7 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1023px) {
   /* On desktop, reset header row to default grid/flex and hide mobile menu toggle */
   .site-header .grid-x {
     display: flex;
