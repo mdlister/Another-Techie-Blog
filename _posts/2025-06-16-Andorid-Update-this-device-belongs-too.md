@@ -116,6 +116,10 @@ Once all the devices are removed you can unbind Google Play store from Intune.
 
 - Work profiles are removed  
 - Fully managed devices will **factory reset**
+- App Configuration Profiles will stop working. 
+
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-07-09%20140433.png)
+
 
 ![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104242-b162bff1-90a2-4a60-b40e-a6103f73d764.png)
 
