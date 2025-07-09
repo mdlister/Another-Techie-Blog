@@ -84,7 +84,7 @@ Remove your organisation:
 In Intune:  
 **Tenant Administration > Under Tenant Status > Connector Status > Managed Google Play Connection > Managed Google Play**
 
-![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131510.png")
+![Screenshot]("/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131510.png")
 
 
 Click **Disconnect**:
@@ -104,11 +104,11 @@ You can batch remove devices to make it easier up to 100 devices.
 
 From the Devices view within Intune, show only Android devices, then in the menu select Bluk Actions
 
-![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131824.png)
+![Screenshot]("/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131824.png")
 
 Then add the devices 
 
-![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131852.png)
+![Screenshot]("/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131852.png")
 
 Once all the devices are removed you can unbind Google Play store from Intune. 
 
