@@ -102,13 +102,13 @@ Confirm disconnection:
 
 You can batch remove devices to make it easier up to 100 devices. 
 
-From the Devices view within Intune, show only Android devices, then in the menu select Bluk Actions
+From the Devices view within Intune, show only Android devices, then in the menu select Bulk Actions
 
-![Screenshot]("/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131824.png")
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-07-09%20131824.png)
 
 Then add the devices 
 
-![Screenshot]("/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131852.png")
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-07-09%20131852.png)
 
 Once all the devices are removed you can unbind Google Play store from Intune. 
 
