@@ -80,8 +80,12 @@ Remove your organisation:
 
 ### Step 2: Disconnect Google Managed Play from Intune
 
+
 In Intune:  
-**Tenant Administration > Connectors and Tokens > Managed Google Play**
+**Tenant Administration > Under Tenant Status > Connector Status > Managed Google Play Connection > Managed Google Play**
+
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131510.png")
+
 
 Click **Disconnect**:
 
@@ -96,6 +100,20 @@ Confirm disconnection:
 ![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20103949-f90aedc1-f36f-4d38-a87c-dccce2709b7c.png)  
 ![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104014-8ef599c1-997c-4795-808b-8d43701f418f.png)
 
+You can batch remove devices to make it easier up to 100 devices. 
+
+From the Devices view within Intune, show only Android devices, then in the menu select Bluk Actions
+
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131824.png)
+
+Then add the devices 
+
+![Screenshot](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot 2025-07-09 131852.png)
+
+Once all the devices are removed you can unbind Google Play store from Intune. 
+
+** Impact **
+
 - Work profiles are removed  
 - Fully managed devices will **factory reset**
 
@@ -108,7 +126,10 @@ Confirm disconnection:
 Run through the setup wizard again:
 
 ![Wizard Start](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104256-28f846d8-aa4a-4db7-8106-97449f38b3e4.png)  
-![Select Android](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104333-7c709da1-3806-4449-beb6-13de7f74311d.png)  
+
+For me, I selected Sign up for Andorid Only, but select what ever you need for your organisation. 
+
+![Select Android Only](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104333-7c709da1-3806-4449-beb6-13de7f74311d.png)  
 ![Get Started](/assets/images/2025-06-16-Andorid-Update-this-device-belongs-too/Screenshot%202025-06-13%20104346-6b36dddd-b954-4f7c-9035-0e684f3c4acb.png)
 
 **Leave the organisation name blank** if you don't want it to appear on devices:
