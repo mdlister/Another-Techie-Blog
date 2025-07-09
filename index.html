@@ -14,7 +14,7 @@ nav: true
         <center><a href="{{ post.url }}">
           <h1>{{ post.title }} </h1>
           <p class="blogdate">{{ post.date | date: "%d %B %Y" }}</p>
-          <img style="border-radius: 5px" src="/images/{{ post.thumb }}" /></a>
+          <img style="border-radius: 5px width: 50%;" src="/images/{{ post.thumb }}" /></a>
         </center>
         <div style="text-align: left;">{{ post.content |truncatehtml | truncatewords: 75 }}</div> </a
         ><a  class="button expanded" href="{{ post.url }}">Read More</a>
