@@ -10,24 +10,28 @@ tags: [terraform, azure, azure-devops, pipelines, oidc, workload-identity, uk-so
 canonical_url: https://anothertechieblog.co.uk/terraform-mini-series-part-1
 ---
 
+I've wanted to write something for a while around Terraform and how I'd go about setting it up from scratch. I've done it a few times but always forgotten a step or two and had to click about to get it working. To stop that from happening again and to share my insights and experience with you all I'm putting together a terraform mini series on how to setup terraform with Azure Devops to manage Microsoft products. I'm going to be using this as a test environment to try and manage Intune configurations and Power Platform infrastructure as well as the Azure stack. 
+
+I've written this series to make it scaleable for multiple environemnts and considered some of the lessons I've learnt from using Terraform and building a repository one way only to then have to refactor it later. 
+
 > **Series goal:** Stand up a practical, multi‑environment Terraform platform on Azure DevOps (with split pipelines for Infra/Entra/MS Graph), using secure auth, remote state, and reusable modules—scaling from *Dev* to *Prod*.
 
 ## What you’ll build today
 
-- A new Azure DevOps repo (`codebase/`) and a working pipeline that authenticates to Azure using **Workload Identity Federation (OIDC)**—no client secrets to rotate. [1](https://www.checkov.io/)
-- Terraform **remote state** in Azure Storage with **locking**, authenticated via **Azure AD/OIDC**. [2](https://developer.hashicorp.com/terraform/language/backend/azurerm)
+- A new Azure DevOps repo (`codebase/`) and a working pipeline that authenticates to Azure using **Workload Identity Federation (OIDC)** - no client secrets to rotate. 
+- Terraform remote state in Azure Storage with locking, authenticated via **Azure AD/OIDC**.
 - A minimal infrastructure composition in **UK South**:
   - Resource Group
   - Virtual Network + Subnet
-  - *(Optional “go further”)* a small **B1s** VM attached to the subnet
+  - *(Optional "go further")* a small **B1s** VM attached to the subnet
 - Notes on extending to **UK West** for resilience later.
 
 ---
 
 ## Why these choices?
 
-- **Workload Identity Federation** is now the recommended way to connect Azure DevOps pipelines to Azure—federated credentials remove long‑lived secrets and their renewals. [1](https://www.checkov.io/)
-- Terraform’s `azurerm` backend stores state in Azure Blob Storage, supports **state locking**, and can authenticate using **Azure AD/OIDC** (no account keys or SAS required). [2](https://developer.hashicorp.com/terraform/language/backend/azurerm)
+- **Workload Identity Federation** is now the recommended way to connect Azure DevOps pipelines to Azure—federated credentials remove long‑lived secrets and their renewals.
+- Terraform’s `azurerm` backend stores state in Azure Blob Storage, supports **state locking**, and can authenticate using **Azure AD/OIDC** (no account keys or SAS required).
 
 ---
 
@@ -37,7 +41,7 @@ canonical_url: https://anothertechieblog.co.uk/terraform-mini-series-part-1
 - An Azure DevOps organisation and project.
 - You’ll capture your own screenshots as you go.
 
-> **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, `rg-core-dev-uks`, `sttfstateprod001`). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [3](https://learn.microsoft.com/en-us/azure/devops/pipelines/release/deploy-using-approvals?view=azure-devops)[4](https://github.com/microsoft/azure-pipelines-terraform)
+> **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, `rg-core-dev-uks`, `sttfstateprod001`). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
 
 ---
 
@@ -56,9 +60,10 @@ CONTAINER="tfstate"
 ```
 
 # create RG, storage, and container
-az group create -n $RG_STATE -l $LOC
+```az group create -n $RG_STATE -l $LOC
 az storage account create -g $RG_STATE -n $SA_NAME -l $LOC --sku Standard_LRS --encryption-services blob
 az storage container create --name $CONTAINER --account-name $SA_NAME
+```
 
 - Azure Storage is a supported backend for Terraform and provides state locking via blob leases. [Connect Te...s over SSH]
 - We’ll authenticate to blob data plane via Azure AD. Later, we’ll assign our pipeline identity the Storage Blob Data Contributor role so it can read/write the state file. [Assign an...re Storage]
