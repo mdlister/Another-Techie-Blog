@@ -26,7 +26,7 @@ I've written this series to make it scaleable for multiple environemnts and cons
 
 ## What you’ll build today
 
-- A new Azure DevOps repo (`codebase/`) and a working pipeline that authenticates to Azure using **Workload Identity Federation (OIDC)** - no client secrets to rotate. 
+- A new Azure DevOps repo (codebase) and a working pipeline that authenticates to Azure using **Workload Identity Federation (OIDC)** - no client secrets to rotate. 
 - Terraform remote state in Azure Storage with locking, authenticated via **Azure AD/OIDC**.
 - A minimal infrastructure composition in **UK South**:
   - Resource Group
@@ -39,7 +39,7 @@ I've written this series to make it scaleable for multiple environemnts and cons
 ## Why these choices?
 
 - **Workload Identity Federation** is now the recommended way to connect Azure DevOps pipelines to Azure—federated credentials remove long‑lived secrets and their renewals.
-- Terraform’s `azurerm` backend stores state in Azure Blob Storage, supports **state locking**, and can authenticate using **Azure AD/OIDC** (no account keys or SAS required).
+- Terraform’s azurerm backend stores state in Azure Blob Storage, supports **state locking**, and can authenticate using **Azure AD/OIDC** (no account keys or SAS required).
 
 ---
 
@@ -49,7 +49,7 @@ I've written this series to make it scaleable for multiple environemnts and cons
 - An Azure DevOps organisation and project.
 - You’ll capture your own screenshots as you go.
 
-> **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, `rg-core-dev-uks`, `sttfstateprod001`). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
+` **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, rg-core-dev-uks, sttfstateprod001). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)`
 
 ---
 
@@ -59,7 +59,7 @@ Terraform’s backend must exist before the first pipeline run. We’ll create a
 
 > You can run these in Azure Cloud Shell or locally with Azure CLI.
 
-```bash
+```
 # variables (adjust to taste)
 RG_STATE="rg-tfstate-core-uks"
 LOC="uksouth"
@@ -67,8 +67,10 @@ SA_NAME="sttfstate$RANDOM"   # must be globally unique, 3-24 lower-case letters/
 CONTAINER="tfstate"
 ```
 
-# create RG, storage, and container
-```az group create -n $RG_STATE -l $LOC
+### create RG, storage, and container
+
+```
+az group create -n $RG_STATE -l $LOC
 az storage account create -g $RG_STATE -n $SA_NAME -l $LOC --sku Standard_LRS --encryption-services blob
 az storage container create --name $CONTAINER --account-name $SA_NAME
 ```
@@ -167,25 +169,22 @@ terraform {
 ### Environment composition (env/dev)
 #### /codebase/env/dev/main.tf
 
-```
+```hcl
 variable "location" {
   type        = string
   description = "Azure region for resources"
   default     = "UK South"
 }
-
 variable "name_prefix" {
   type        = string
   description = "Prefix for resource names (CAF-style short names are fine)"
   default     = "core-dev-uks"
 }
-
 module "rg" {
   source   = "../../modules/azure/resource-group"
   rg_name  = "rg-${var.name_prefix}"
   location = var.location
 }
-
 module "network" {
   source              = "../../modules/azure/network"
   location            = var.location
@@ -195,7 +194,6 @@ module "network" {
   subnet_name         = "snet-main"
   subnet_address_pref = "10.10.1.0/24"
 }
-
 # --- Optional (Go further) small VM ---
 # module "compute" {
 #   source              = "../../modules/azure/compute"
@@ -206,7 +204,6 @@ module "network" {
 #   vm_name             = "vm-${var.name_prefix}"
 #   vm_sku              = "Standard_B1s"
 # }
-
 ```
 
 #### /codebase/env/dev/dev.tfvars
