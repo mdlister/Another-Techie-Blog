@@ -4,11 +4,19 @@ comments: true
 thumb: Terraform_on_Azure.jpeg
 smallthumb: Terraform
 title: "Terraform on Azure DevOps, Day 1: First UK South Deploy with Secure State"
-tagline: "Spin up a secure Terraform pipeline in Azure DevOps using Workload Identity Federation and Azure Storage state, and deploy a VNet and VM to UK South."
+tagline: Learn Terraform in a mini series for Azure and M365
+description: "Spin up a secure Terraform pipeline in Azure DevOps using Workload Identity Federation and Azure Storage state, and deploy a VNet and VM to UK South."
 slug: terraform-mini-series-part-1
 tags: [terraform, azure, azure-devops, pipelines, oidc, workload-identity, uk-south, iac]
 canonical_url: https://anothertechieblog.co.uk/terraform-mini-series-part-1
+modified: 2025-09-17
 ---
+
+
+
+
+
+
 
 I've wanted to write something for a while around Terraform and how I'd go about setting it up from scratch. I've done it a few times but always forgotten a step or two and had to click about to get it working. To stop that from happening again and to share my insights and experience with you all I'm putting together a terraform mini series on how to setup terraform with Azure Devops to manage Microsoft products. I'm going to be using this as a test environment to try and manage Intune configurations and Power Platform infrastructure as well as the Azure stack. 
 
