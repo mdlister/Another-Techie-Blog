@@ -49,7 +49,7 @@ I've written this series to make it scaleable for multiple environemnts and cons
 - An Azure DevOps organisation and project.
 - You’ll capture your own screenshots as you go.
 
-` **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, rg-core-dev-uks, sttfstateprod001). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)`
+ **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, rg-core-dev-uks, sttfstateprod001). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
 
 ---
 
