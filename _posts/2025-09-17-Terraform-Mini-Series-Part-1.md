@@ -446,17 +446,6 @@ stages:
         backendAzureRmStorageAccountName: $(tfstateSa)
         backendAzureRmContainerName: $(tfstateContainer)
         backendAzureRmKey: $(tfstateKey)
-      env:  # ← MUST ADD THIS
-        ARM_USE_OIDC: true
-        ARM_TENANT_ID: $(tenantId)
-        ARM_SUBSCRIPTION_ID: $(subscriptionid)
-        ARM_CLIENT_ID: $(clientid)
-
-    # Debug to verify variables are set
-    - script: |
-        echo "=== Environment Variables for Terraform ==="
-        env | grep -E '^ARM_' | sort
-      displayName: Verify ARM Variables
 
     # PLAN with OIDC
     - task: TerraformTask@5
@@ -465,26 +454,18 @@ stages:
         command: plan
         workingDirectory: codebase/env/$(envName)
         environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
-      env:  # ← MUST ADD THIS
-        ARM_USE_OIDC: true
-        ARM_TENANT_ID: $(tenantId)
-        ARM_SUBSCRIPTION_ID: $(subscriptionid)
-        ARM_CLIENT_ID: $(clientid)
 
     # APPLY with OIDC  
     - task: TerraformTask@5
       displayName: terraform apply
       inputs:
         command: apply
-        environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
-        workingDirectory: codebase/env/$(envName)
         commandOptions: >
           -auto-approve
-      env:  # ← MUST ADD THIS
-        ARM_USE_OIDC: true
-        ARM_TENANT_ID: $(tenantId)
-        ARM_SUBSCRIPTION_ID: $(subscriptionid)
-        ARM_CLIENT_ID: $(clientid)
+        environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
+        workingDirectory: codebase/env/$(envName)
+
+
 
 
 ```
