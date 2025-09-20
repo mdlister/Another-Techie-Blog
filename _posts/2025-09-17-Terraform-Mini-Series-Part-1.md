@@ -20,7 +20,7 @@ modified: 2025-09-17
 
 I've wanted to write something for a while around Terraform and how I'd go about setting it up from scratch. I've done it a few times but always forgotten a step or two and had to click about to get it working. To stop that from happening again and to share my insights and experience with you all I'm putting together a terraform mini series on how to setup terraform with Azure Devops to manage Microsoft products. I'm going to be using this as a test environment to try and manage Intune configurations and Power Platform infrastructure as well as the Azure stack. 
 
-I've written this series to make it scaleable for multiple environemnts and considered some of the lessons I've learnt from using Terraform and building a repository one way only to then have to refactor it later. 
+I've written this series to make it scalable for multiple environments and considered some of the lessons I've learned from using Terraform and building a repository one way only to then have to refactor it later. 
 
 > **Series goal:** Stand up a practical, multi‑environment Terraform platform on Azure DevOps (with split pipelines for Infra/Entra/MS Graph), using secure auth, remote state, and reusable modules—scaling from *Dev* to *Prod*.
 
@@ -34,6 +34,7 @@ I've written this series to make it scaleable for multiple environemnts and cons
   - *(Optional "go further")* a small **B1s** VM attached to the subnet
 - Notes on extending to **UK West** for resilience later.
 
+For a look at all the code we will be building, check out https://github.com/mdlister/TerraformMiniSeries I've published where you'll find all the code if you aren't following along.
 ---
 
 ## Why these choices?
@@ -159,7 +160,7 @@ From DevOps, click Repo then clone in VS Code
       dev.tfvars
 ```
 
-once this is done, commit the code back to the repository either via commandline or using the Visual Studio Code GUI 
+once this is done, commit the code back to the repository either via command line or using the Visual Studio Code GUI 
 
 ```
 git add .
@@ -491,7 +492,7 @@ Then click save
 --- 
 ## Step 6 — Run it and verify
 
-Another issue I found whilst doing this, you need to have the Azure Pipelines Terraform Tasks marketplace addon installed in your Devops organisation. It's free but provides the TerraformCLI components to allow the Workload Identity to work correctly. 
+Another issue I found whilst doing this, you need to have the Azure Pipelines Terraform Tasks marketplace add-on installed in your DevOps organisation. It's free but provides the TerraformCLI components to allow the Workload Identity to work correctly. 
 
 1. Commit and push.
 2. We need to create our pipeline now.
@@ -515,7 +516,7 @@ Then it will start after you approve it to connect to Azure
 
 It's taken me 4 hours to troubleshoot why it wouldn't work with the OIDC authentication thats "recommended".
 
-The Terraform tasks need to be on V5 and some other bits in the pipeline that i've now fixed, cleaned up the pipeline and get a successful build. 
+The Terraform tasks need to be on V5 and some other bits in the pipeline that i've now fixed, cleaned up the pipeline and got a successful build. 
 
 --- 
 
