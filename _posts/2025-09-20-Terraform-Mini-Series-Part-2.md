@@ -33,7 +33,7 @@ modified: 2025-09-20
 
 Infrastructure that isn’t codified drifts—someone clicks a setting, policies change, and suddenly your pipeline fails. **Infrastructure as Code (IaC)** fixes that: every change is reviewed, versioned, and reproducible. Moving your Day 1 bootstrap (state storage) **into Terraform** means its security posture (versioning, retention, and locks) is **enforced**. If disaster strikes, you can rebuild environments from Git.
 
-> The Terraform **azurerm** backend stores state in Azure Blob Storage and uses Blob’s native **lease‑based locking**—safe for teams/CI. With `use_azuread_auth = true`, it authenticates to the blob **data plane** using Entra ID (Azure AD).  
+> The Terraform **azurerm** backend stores state in Azure Blob Storage and uses Blob’s native **lease‑based locking**—safe for teams/CI. With `use_azuread_auth = true` it authenticates to the blob **data plane** using Entra ID (Azure AD).  
 > • Backend docs: <https://developer.hashicorp.com/terraform/language/backend/azurerm>  
 > • Ensure your pipeline identity has **Storage Blob Data Contributor** on the state account/container (data plane), otherwise `terraform init` will fail.
 
@@ -51,7 +51,7 @@ Infrastructure that isn’t codified drifts—someone clicks a setting, policies
 
 We’ll create a small **core‑infra** module, then **import** the existing RG/Storage/Container so Terraform manages them going forward.
 
-> **What `terraform import` does**: it associates an existing cloud resource with a resource block in your configuration, adding it to Terraform **state** without changing it. From then on, Terraform tracks it for drift and enforces configuration. You still need to make your config **match the real resource** (same names/IDs), or Terraform will want to replace it during an apply.
+> **What terraform import does**: it associates an existing cloud resource with a resource block in your configuration, adding it to Terraform **state** without changing it. From then on, Terraform tracks it for drift and enforces configuration. You still need to make your config **match the real resource** (same names/IDs), or Terraform will want to replace it during an apply.
 
 ### 1.1 Module layout
 
@@ -187,7 +187,7 @@ In many organisations, **RBAC** is the standard. We’ll create a Key Vault **wi
 
 > If your org prefers the legacy **Access policy** model for ADO Variable Groups, you can flip the approach: set `enable_rbac_authorization = false` and replace the role assignment with an `azurerm_key_vault_access_policy` that grants **Get, List**.
 
-**Add to `/codebase/modules/azure/core-infra/main.tf`:**
+Add to `/codebase/modules/azure/core-infra/main.tf`
 ```hcl
 data "azurerm_client_config" "current" {}
 
@@ -224,7 +224,7 @@ resource "azurerm_key_vault_secret" "demo" {
 }
 ```
 
-**Pass the pipeline principal ID in `/codebase/env/bootstrap/main.tf`:**
+**Pass the pipeline principal ID in `/codebase/env/bootstrap/main.tf`**
 ```hcl
 module "core_infra" {
   # ...existing args...
@@ -232,7 +232,7 @@ module "core_infra" {
 }
 ```
 
-Run `terraform apply` again from the `bootstrap/` directory to create the Key Vault, assign RBAC, and add the demo secret.
+Run terraform apply again from the bootstrap/ directory to create the Key Vault, assign RBAC, and add the demo secret.
 
 > **RBAC role explanation:** The **Key Vault Secrets User** role allows list/get on secrets in an RBAC‑mode vault (data‑plane). See: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
 
