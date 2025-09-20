@@ -513,7 +513,9 @@ Then it will start after you approve it to connect to Azure
 ![Devops-PipelineDay1.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Devops-PipelineDay1.png)
 
 
-It's taken me 4 hours to troubleshoot why it wouldn;t work with the OIDC authentication thats "recommended" The Terraform tasks need to be on V5 and some other bits in the pipeline that i've now fixed and will confirm they are correct. 
+It's taken me 4 hours to troubleshoot why it wouldn't work with the OIDC authentication thats "recommended".
+
+The Terraform tasks need to be on V5 and some other bits in the pipeline that i've now fixed, cleaned up the pipeline and get a successful build. 
 
 --- 
 
@@ -526,15 +528,15 @@ We’ll keep UK South as default. When you want to explore resilience later, add
 
 
 - terraform init fails with auth to the backend
-Make sure the pipeline identity (your WIF service connection principal) has Storage Blob Data Contributor on the tfstate storage account/container—AAD is used to access the blob data plane when use_azuread_auth = true.
+    - Make sure the pipeline identity (your WIF service connection principal) has Storage Blob Data Contributor on the tfstate storage account/container—AAD is used to access the blob data plane when use_azuread_auth = true.
 
 
 - Don’t see the “Workload identity federation” option?
-Microsoft is rolling out the new experience; follow the manual WIF steps in the doc (add federated credentials to your app registration, then finish the service connection).
+  - Microsoft is rolling out the new experience; follow the manual WIF steps in the doc (add federated credentials to your app registration, then finish the service connection).
 
 
 - Provider permissions/resource provider registration
-The AzureRM provider may try to auto‑register resource providers; if your identity can’t, set resource_provider_registrations = "none" in the provider block.
+  - The AzureRM provider may try to auto‑register resource providers; if your identity can’t, set resource_provider_registrations = "none" in the provider block.
 
 ---
 
