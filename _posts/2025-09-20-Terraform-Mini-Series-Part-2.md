@@ -16,13 +16,11 @@ modified: 2025-09-20
 
 # Day 2 — Locking State & Managing Secrets with Azure Storage and Key Vault
 
-**Meta:** Secure your Terraform pipeline. Learn to enforce Azure Blob state locking, wire Azure DevOps variable groups to Key Vault for dynamic secrets, and implement least‑privilege RBAC for a robust multi‑environment foundation.
-
 ---
 
 ## What you’ll build today
 
-- **Secure State Management**: Bring the Azure Storage account and container you created in Day 1 **under Terraform management** (via `import`) and protect them with a **CanNotDelete** lock.
+- **Secure State Management**: Bring the Azure Storage account and container you created in Day 1 **under Terraform management** (via import) and protect them with a **CanNotDelete** lock.
 - **Centralised Secrets**: Create an **Azure Key Vault** as the single source of truth for pipeline secrets and sensitive variables.
 - **Dynamic Secrets in DevOps**: Link the Key Vault to an **Azure DevOps Variable Group** so pipelines fetch the **latest secret values at runtime**—no secrets in YAML.
 - **Least‑Privilege Access**: Assign precise RBAC on Storage & Key Vault to the pipeline identity used by your **Workload Identity Federation (OIDC)** service connection.
