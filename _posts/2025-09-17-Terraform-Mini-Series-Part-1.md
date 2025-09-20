@@ -47,7 +47,6 @@ I've written this series to make it scaleable for multiple environemnts and cons
 
 - An Azure subscription and permissions to create resources and role assignments.
 - An Azure DevOps organisation and project.
-- You’ll capture your own screenshots as you go.
 
  **Naming:** I’ll follow Microsoft’s Cloud Adoption Framework (CAF) style and keep names short and descriptive (for example, rg-core-dev-uks, sttfstateprod001). If you’re new to CAF naming, skim the guidance and examples for consistency across resource types. [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
 
@@ -55,9 +54,17 @@ I've written this series to make it scaleable for multiple environemnts and cons
 
 ## Step 1 — Create state storage (one‑time bootstrap)
 
-Terraform’s backend must exist before the first pipeline run. We’ll create a resource group, a storage account, and a private blob container (region: **UK South**).
+Terraform’s backend must exist before the first pipeline run. We’ll create a resource group, a storage account, and a private blob container in Azure first. (region: **UK South**).
 
-> You can run these in Azure Cloud Shell or locally with Azure CLI.
+> You can run these in Azure Cloud Shell or locally with Azure CLI. Or if you prefer to use the portal you can create the resources manually.
+
+Navigate to [https://portal.azure.com/](https://portal.azure.com/) and click the cloud shell icon in the ribbon across the top. This will open the Cloud shell, and if its the first time you open this you will be prompted for a language.
+
+I've opted for Bash
+
+![Screenshot2025-09-19210448.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Screenshot2025-09-19210448.png)
+
+You'll need to select a subscription for a storage account to be created for Cloudshell to store temporary code.
 
 ```
 # variables (adjust to taste)
@@ -74,9 +81,18 @@ az group create -n $RG_STATE -l $LOC
 az storage account create -g $RG_STATE -n $SA_NAME -l $LOC --sku Standard_LRS --encryption-services blob
 az storage container create --name $CONTAINER --account-name $SA_NAME
 ```
+Now you should be able to see the Resource Group, Storage Account and Container for the Statefile. 
 
-- Azure Storage is a supported backend for Terraform and provides state locking via blob leases. [Connect Te...s over SSH]
-- We’ll authenticate to blob data plane via Azure AD. Later, we’ll assign our pipeline identity the Storage Blob Data Contributor role so it can read/write the state file. [Assign an...re Storage]
+![Azure-ResourceGroup.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Azure-ResourceGroup.png)
+
+![Azure-StorageAccount.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Azure-StorageAccount.png)
+
+![Azure-Storage-Container.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Azure-Storage-Container.png)
+
+
+
+- Azure Storage is a supported backend for Terraform and provides state locking via blob leases.
+- We’ll authenticate to blob data plane via EntraID (Azure AD). Later, we’ll assign our pipeline identity the Storage Blob Data Contributor role so it can read/write the state file. 
 
 
 >Tip: Keep this “tfstate” storage minimal and locked down. We’ll import it into Terraform in Day 6 to get everything under code management.
@@ -86,19 +102,37 @@ az storage container create --name $CONTAINER --account-name $SA_NAME
 ## Step 2 — Create an Azure DevOps ARM Service Connection (WIF)
 
 We’ll set up an Azure Resource Manager service connection using Workload Identity Federation. This lets Azure DevOps exchange a short‑lived OIDC token for Azure access—no secrets.
-In Azure DevOps (Project Settings → Service connections):
+
+In [**Azure DevOps**](https://dev.azure.com) (Project Settings → Service connections):
 
 1. New service connection → Azure Resource Manager.
 2. Choose Workload identity federation (automatic if available; otherwise use manual and follow the steps to add a federated credential to your Entra app). The UI rollout varies—you may still see the older experience. 
 3. Scope it to your subscription (or RG) and give it a friendly name, e.g. sc-ado-terraform-wif.
 
+I haven't scoped my connection to a resource group, this means that this service connection will have access to all the resources within the Subscription where I assign permissions.
+
+As the pipeline will be running using this Workload Identity, I want it to be able to create resources within the Subscription and multiple Resource Groups going forward.
+
+![DevOps-ServiceConnection-Setup.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/DevOps-ServiceConnection-Setup.png)
+
+After clicking Save, you will be presented with a summary of your service connection. 
+
+![Devops-SC-Overview.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Devops-SC-Overview.png)
+
+I copied this guid and checked EntraID by pasting the GUID in to the search box and it returned the enterprise app registration. Then in the Azure Portal, within the Subscription > Access Control (IAM) and I added the account to the contributor role to allow this Workload Identity to create and manage resources within the Azure Subscription.
+
+![EntraID-Assign-Role.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/EntraID-Assign-Role.png)
+
+### Access - Don't forget
 **Role assignments your pipeline identity needs:**
 
 - At subscription (or target RG) level, a role that can create what you plan to deploy (start with Contributor, refine later).
-- On the state Storage Account (or its container), grant Storage Blob Data Contributor so Terraform’s backend can read/write the .tfstate blob via AAD.
+- On the state Storage Account (or its container), grant **Storage Blob Data Contributor** so Terraform’s backend can read/write the .tfstate blob via AAD.
 
 ## Step 3 — Repo structure
-Clone your empty repo and scaffold a codebase/ folder with modules and a dev environment.
+Clone your empty repo and create the following directories and files a codebase/ folder with modules and a dev environment.
+
+From DevOps, click Repo then clone in VS Code
 
 ```
 /azure-pipelines.yml
@@ -124,10 +158,21 @@ Clone your empty repo and scaffold a codebase/ folder with modules and a dev env
       backend.tf
       dev.tfvars
 ```
+
+once this is done, commit the code back to the repository either via commandline or using the Visual Studio Code GUI 
+
+```
+git add .
+git commit -m "Created Scaffold"
+git push
+```
+
 ---
 ## Step 4 — Terraform code (modules + dev environment)
 
 ### 4.1 Provider and backend (env/dev)
+
+Paste the code in to each of the files, ignore the errors if VSCode is highlighting any as its checking code when it hasn't been fully populated. 
 
 #### /codebase/env/dev/providers.tf
 
@@ -355,68 +400,139 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  envName: dev
+- name: envName
+  value: dev
+
+- group: tf-dev
 
 stages:
 - stage: Validate
   jobs:
   - job: validate
     steps:
-    - task: TerraformInstaller@0
+    - task: TerraformInstaller@1
+      displayName: Install Terraform (latest)
       inputs:
-        terraformVersion: '1.8.x'
+        terraformVersion: latest
 
-    # Run in env/dev (fmt/validate are quick; we'll add TFLint/Checkov in Day 5)
+    # Keep validation backend-less
     - script: |
+        terraform -chdir=codebase/env/$(envName) init -backend=false
         terraform -chdir=codebase/env/$(envName) fmt -check -recursive
         terraform -chdir=codebase/env/$(envName) validate
-      displayName: 'terraform fmt & validate'
+      displayName: terraform fmt & validate
 
 - stage: PlanApply
   jobs:
   - job: plan_apply
     steps:
-    - task: TerraformTaskV3@3
-      displayName: 'terraform init'
+    - task: TerraformInstaller@1
+      displayName: Install Terraform (latest)
       inputs:
+        terraformVersion: latest
+
+    # INIT with AzureRM backend + OIDC
+    - task: TerraformTask@5
+      displayName: terraform init (azurerm backend + OIDC)
+      inputs:
+        command: init
         provider: 'azurerm'
-        command: 'init'
-        workingDirectory: 'codebase/env/$(envName)'
-        backendType: 'azurerm'
-        # This service connection provides OIDC to ARM and (with proper RBAC) to Blob data plane
+        workingDirectory: codebase/env/$(envName)
+        backendType: azurerm
+        backendAzureRmUseEntraIdForAuthentication: false
+        backendAzureRmUseCliFlagsForAuthentication: true
         backendServiceArm: 'sc-ado-terraform-wif'
+        backendAzureRmResourceGroupName: $(tfstateRg)
+        backendAzureRmStorageAccountName: $(tfstateSa)
+        backendAzureRmContainerName: $(tfstateContainer)
+        backendAzureRmKey: $(tfstateKey)
+      env:  # ← MUST ADD THIS
+        ARM_USE_OIDC: true
+        ARM_TENANT_ID: $(tenantId)
+        ARM_SUBSCRIPTION_ID: $(subscriptionid)
+        ARM_CLIENT_ID: $(clientid)
 
-    - task: TerraformTaskV3@3
-      displayName: 'terraform plan'
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: 'codebase/env/$(envName)'
-        environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
+    # Debug to verify variables are set
+    - script: |
+        echo "=== Environment Variables for Terraform ==="
+        env | grep -E '^ARM_' | sort
+      displayName: Verify ARM Variables
 
-    - task: TerraformTaskV3@3
-      displayName: 'terraform apply (auto-approve for Day 1)'
+    # PLAN with OIDC
+    - task: TerraformTask@5
+      displayName: terraform plan
       inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        commandOptions: '-auto-approve'
-        workingDirectory: 'codebase/env/$(envName)'
+        command: plan
+        workingDirectory: codebase/env/$(envName)
         environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
+      env:  # ← MUST ADD THIS
+        ARM_USE_OIDC: true
+        ARM_TENANT_ID: $(tenantId)
+        ARM_SUBSCRIPTION_ID: $(subscriptionid)
+        ARM_CLIENT_ID: $(clientid)
+
+    # APPLY with OIDC  
+    - task: TerraformTask@5
+      displayName: terraform apply
+      inputs:
+        command: apply
+        environmentServiceNameAzureRM: 'sc-ado-terraform-wif'
+        workingDirectory: codebase/env/$(envName)
+        commandOptions: >
+          -auto-approve
+      env:  # ← MUST ADD THIS
+        ARM_USE_OIDC: true
+        ARM_TENANT_ID: $(tenantId)
+        ARM_SUBSCRIPTION_ID: $(subscriptionid)
+        ARM_CLIENT_ID: $(clientid)
+
 
 ```
 
 > The azurerm backend authenticates to the blob data plane using AAD/OIDC (we set use_azuread_auth = true in backend.tf). Ensure the pipeline identity has Storage Blob Data Contributor on the storage account (or container), otherwise init will fail to read/write state.
 
+Before we can run this we also need to create DevOps Library variable Group. I prefer this to hardcoding the values in the pipeline. 
+
+Within DevOps, Select Pipelines > Library > Create Variable Group and call it **tf-dev** as we defined that within the variables in the pipeline as a group.
+
+we then need to create the following key pair values: 
+
+
+- tfstaterg: rg-tfstate-core-uks
+-  tfstatesa: sttfstate9683       # <-- change to your SA name
+-  tfstatecontainer: tfstate
+-  tfstatekey: '$(envName)/infra.tfstate'
+- tenantid: ######-Your Azure Tenant ID-####### # <-- change to your tenant ID
+- subscriptionId: ####-####-#####-#####-##### # <-- change to your Subscription ID
+
+Then click save
+
 --- 
 ## Step 6 — Run it and verify
 
+Another issue I found whilst doing this, you need to have the Azure Pipelines Terraform Tasks marketplace addon installed in your Devops organisation. It's free but provides the TerraformCLI components to allow the Workload Identity to work correctly. 
+
 1. Commit and push.
+2. We need to create our pipeline now.
+    - Navigate back to DevOps and click Pipelines 
+    - Click Create Pipeline
+    - Select Azure Repos Git YAML
+    - Select the Repo where the azure-pipelines.yml file lives and then click Run.
 2. Watch the pipeline: Validate → PlanApply.
 3. In Azure Portal, check:
     - Resource group rg-core-dev-uks
     - VNet vnet-core-dev-uks with subnet snet-main
     - (If enabled) VM vm-core-dev-uks
     - Storage container tfstate with blob dev/infra.tfstate (you’ll also see lease locks during runs). Terraform state locking is provided by Azure Blob’s native capabilities.
+
+Then it will start after you approve it to connect to Azure 
+
+![](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Devops-Pipeline-Permissions.png)
+
+![Devops-PipelineDay1.png](/assets/images/2025-09-17-Terraform-Mini-Series-Part-1/Devops-PipelineDay1.png)
+
+
+It's taken me 4 hours to troubleshoot why it wouldn;t work with the OIDC authentication thats "recommended" The Terraform tasks need to be on V5 and some other bits in the pipeline that i've now fixed and will confirm they are correct. 
 
 --- 
 
