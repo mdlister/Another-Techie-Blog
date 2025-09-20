@@ -240,7 +240,7 @@ Run terraform apply again from the bootstrap/ directory to create the Key Vault,
 
 ## Step 3 — Link Key Vault to Azure DevOps (with RBAC) and use the secret at runtime
 
-1. **Pipelines → Library → + Variable group** (e.g., `tf-bootstrap-kv`).  
+1. **Pipelines → Library → + Variable group** (e.g., tf-bootstrap-kv).  
 2. Toggle **Link secrets from an Azure key vault as variables**.  
 3. Choose your **ARM service connection** (WIF) and **Authorize**.  
 4. Select your **Key Vault** and **Authorize**.  
@@ -276,7 +276,7 @@ stages:
 ```
 
 > **How Variable Groups ↔ Key Vault works**: Only **secret names** are mapped; **values** are fetched at **runtime**. Updates to existing secret **values** flow automatically; adding/removing **new secret names** requires updating the Variable Group’s selected list.  
-> **Important doc note:** Microsoft’s page currently says **RBAC‑mode vaults aren’t supported** for this Variable Group feature. In our testing, RBAC **did** work when the pipeline principal had **Key Vault Secrets User**; behavior may vary by tenant/rollout. If it fails for you, switch to **Access policies**, or keep **RBAC** and fetch with the `AzureKeyVault@2` task instead.  
+> **Important doc note:** Microsoft’s page currently says **RBAC‑mode vaults aren’t supported** for this Variable Group feature. In our testing, RBAC **did** work when the pipeline principal had **Key Vault Secrets User**; behavior may vary by tenant/rollout. If it fails for you, switch to **Access policies**, or keep **RBAC** and fetch with the AzureKeyVault@2 task instead.  
 > • ADO docs (support note): <https://learn.microsoft.com/azure/devops/pipelines/library/link-variable-groups-to-key-vaults?view=azure-devops>  
 > • Key Vault RBAC guide: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
 
@@ -284,8 +284,8 @@ stages:
 
 ## Troubleshooting
 
-- **`terraform init` fails to reach state** (403 or lease errors): ensure the pipeline principal has **Storage Blob Data Contributor** on the state account/container; confirm backend has `use_azuread_auth = true`.
-- **Variable Group can’t select secrets**: confirm the pipeline principal holds **data‑plane** permissions (RBAC: *Key Vault Secrets User*) and the secret isn’t expired/disabled. If still blocked, use **Access policies** or the **`AzureKeyVault@2`** task.
+- **`terraform init` fails to reach state** (403 or lease errors): ensure the pipeline principal has **Storage Blob Data Contributor** on the state account/container; confirm backend has `use_azuread_auth = true`
+- **Variable Group can’t select secrets**: confirm the pipeline principal holds **data‑plane** permissions (RBAC: *Key Vault Secrets User*) and the secret isn’t expired/disabled. If still blocked, use **Access policies** or the **AzureKeyVault@2** task.
 - **Import drift**: make sure your Terraform arguments (names/IDs) **exactly match** the existing resources before you import; computed names will cause replacement.
 - **Container import**: if the ARM path fails, use the **blob URL** syntax shown above.
 
@@ -293,17 +293,6 @@ stages:
 
 ## What’s next (Day 3)
 
-- **Multi‑environment structure** (dev/test/prod) with reusable modules and `*.tfvars`.
+- **Multi‑environment structure** (dev/test/prod) with reusable modules and `*.tfvars`
 - **Promotion** patterns and environment‑scoped Key Vaults/Variable Groups.
 - **CAF‑aligned naming** for consistency across your estate.
-
----
-
-## References
-
-- **Terraform azurerm backend (state, locking, AAD/OIDC)** — <https://developer.hashicorp.com/terraform/language/backend/azurerm>
-- **Azure DevOps: Link Variable Groups ↔ Key Vault (support note re: RBAC)** — <https://learn.microsoft.com/azure/devops/pipelines/library/link-variable-groups-to-key-vaults?view=azure-devops>
-- **Key Vault RBAC (built‑in roles & guidance)** — <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
-- **Storage container resource & import notes** — <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container>, <https://github.com/hashicorp/terraform-provider-azurerm/issues/29065>
-
-[Day 1 post]: /terraform-mini-series-part-1
