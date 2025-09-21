@@ -281,7 +281,7 @@ module "core_infra" {
 
 Run terraform apply again from the bootstrap/ directory to create the Key Vault, assign RBAC, and add the demo secret.
 
-> I got an error here originally because I was still running Terraform locally from the VSCode terminal and my account wasn't setup in RBAC as a Key Vault Secrets User so I was getting forbidden. Updated the permissions for my account within the portal and waited 10 minutes and then it worked. Had I used the azure devops pipeline it would have worked as we had already assigned the role to that account.  
+> I got an error here originally because I was still running Terraform locally from the VSCode terminal and my account wasn't setup in RBAC as a Key Vault Secrets User so I was getting forbidden. Updated the permissions for my account within the portal and waited 10 minutes and then it worked. Had I used the azure devops pipeline it would have worked as we had already assigned the role to that account. As I was creating a Secret, i needed the role Key Vault Secrets Officer, the pipeline will only read secrets which is why it has the role of secets user. You'll need to swap this if you want to create secrets in Terraform as well. (Not recommended) 
 
 > **RBAC role explanation:** The **Key Vault Secrets User** role allows list/get on secrets in an RBAC‑mode vault (data‑plane). See: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
 
