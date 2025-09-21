@@ -370,6 +370,8 @@ In Step 2b, we have already added key vault variable groups to our pipeline, we 
 > • ADO docs (support note): <https://learn.microsoft.com/azure/devops/pipelines/library/link-variable-groups-to-key-vaults?view=azure-devops>  
 > • Key Vault RBAC guide: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
 
+
+Now all your code is in DevOps, you can delete the .terraform and the terraform.lock file from the bootstrap directory as the state is now in the cloud. 
 ---
 
 ## Troubleshooting
