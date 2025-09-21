@@ -228,7 +228,11 @@ We have now successfully imported the resource group, storage account & containe
 
 In many organisations, **RBAC** is the standard. We’ll create a Key Vault **with RBAC**, grant the pipeline identity read access to **secrets**, and add a small **demo secret** to prove the wiring—everything managed by Terraform.
 
+This Key Vault will be used for the infrastructure across all environments and later we will develop a dev, test and prod keyvault for specific secrets for each environment.
+
 > If your org prefers the legacy **Access policy** model for ADO Variable Groups, you can flip the approach: set `enable_rbac_authorization = false` and replace the role assignment with an `azurerm_key_vault_access_policy` that grants **Get, List**.
+
+> Object ID needed as the pipeline_principal_id in bootstrap/main.tf is the It's the objectID of the Enterprise App and not the application id.
 
 Add to `/codebase/modules/azure/core-infra/main.tf`
 ```hcl
@@ -277,46 +281,89 @@ module "core_infra" {
 
 Run terraform apply again from the bootstrap/ directory to create the Key Vault, assign RBAC, and add the demo secret.
 
+> I got an error here originally because I was still running Terraform locally from the VSCode terminal and my account wasn't setup in RBAC as a Key Vault Secrets User so I was getting forbidden. Updated the permissions for my account within the portal and waited 10 minutes and then it worked. Had I used the azure devops pipeline it would have worked as we had already assigned the role to that account.  
+
 > **RBAC role explanation:** The **Key Vault Secrets User** role allows list/get on secrets in an RBAC‑mode vault (data‑plane). See: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
+
+We'll also update the pipeline to allow you to run from the pipeline now instead of locally. 
+
+---
+
+## Step 2b — Updating the Pipeline for Environment Selection
+What are we changing, and why?
+Up to now, your pipeline has used a hardcoded variable (e.g., envName: dev) to determine which environment (dev, test, prod) to deploy. This works, but it’s inflexible—every time you want to run against a different environment, you have to edit the YAML or create a separate pipeline.
+We’re going to improve this by:
+
+Adding a dropdown parameter to the pipeline, so you can choose the target environment (dev, test, prod) each time you run it manually.
+Dynamically including the correct variable group(s) and working directory for the selected environment.
+Making the pipeline more robust, reusable, and friendly for both CI and manual runs.
+
+Why is this important?
+
+Flexibility: You can deploy to any environment without editing code.
+Safety: Reduces the risk of accidentally deploying to the wrong environment.
+Scalability: Makes it easy to add more environments in the future.
+Best practice: Mirrors how professional DevOps teams manage multi-environment deployments.
+
+
+How does it work?
+
+Parameters in Azure DevOps pipelines create a dropdown menu when you click “Run pipeline”.
+The pipeline uses compile-time expressions ($ {{ if ... }}) to include the correct variable group(s) and set the working directory based on your selection.
+All Terraform commands (init, plan, apply) run in the folder for the chosen environment (e.g., codebase/env/dev).
+
+```hcl
+pool:
+  vmImage: ubuntu-latest
+
+  
+parameters:
+- name: environment
+  displayName: Target environment
+  type: string
+  default: dev
+  values:
+  - dev
+  - test
+  - prod
+  - bootstrap
+
+
+variables:
+- name: envName
+  value: ${{ parameters.environment }}
+
+
+${{ if eq(parameters.environment, 'dev') }}:
+  - group: tf-dev
+  # - group: kv-dev        # uncomment if you have a KV-linked group for dev
+
+${{ if eq(parameters.environment, 'test') }}:
+  - group: tf-test
+  # - group: kv-test
+
+${{ if eq(parameters.environment, 'prod') }}:
+  - group: tf-prod
+  # - group: kv-prod
+```
+
+You can also add environment names to the stages as well. 
+
+> stages:
+> stage: Validate
+>  displayname: Validate ($(envName))
 
 ---
 
 ## Step 3 — Link Key Vault to Azure DevOps (with RBAC) and use the secret at runtime
 
-1. **Pipelines → Library → + Variable group** (e.g., tf-bootstrap-kv).  
+In Step 2b, we have already added key vault variable groups to our pipeline, we just need to make sure they now follow the format when creating them kv-environment so they match. 
+
+1. **Pipelines → Library → + Variable group** (e.g., kv-environment).  
 2. Toggle **Link secrets from an Azure key vault as variables**.  
 3. Choose your **ARM service connection** (WIF) and **Authorize**.  
 4. Select your **Key Vault** and **Authorize**.  
 5. **Add** the secret `tfstate-storage-account-name` and **Save**.
-
-**Use it in the pipeline:**
-```yaml
-# azure-pipelines.yml
-variables:
-- name: envName
-  value: dev
-- group: tf-dev           # non-secret config (from Day 1)
-- group: tf-bootstrap-kv  # secrets from Key Vault (linked)
-
-stages:
-- stage: PlanApply
-  jobs:
-  - job: plan_apply
-    steps:
-    - task: TerraformTask@5
-      displayName: terraform init (azurerm backend + OIDC)
-      inputs:
-        command: init
-        workingDirectory: codebase/env/$(envName)
-        backendType: azurerm
-        backendAzureRmUseEntraIdForAuthentication: false
-        backendAzureRmUseCliFlagsForAuthentication: true
-        backendServiceArm: 'sc-ado-terraform-wif'
-        backendAzureRmResourceGroupName: $(tfstateRg)
-        backendAzureRmStorageAccountName: $(tfstate-storage-account-name) # now from KV
-        backendAzureRmContainerName: $(tfstateContainer)
-        backendAzureRmKey: $(tfstateKey)
-```
 
 > **How Variable Groups ↔ Key Vault works**: Only **secret names** are mapped; **values** are fetched at **runtime**. Updates to existing secret **values** flow automatically; adding/removing **new secret names** requires updating the Variable Group’s selected list.  
 > **Important doc note:** Microsoft’s page currently says **RBAC‑mode vaults aren’t supported** for this Variable Group feature. In our testing, RBAC **did** work when the pipeline principal had **Key Vault Secrets User**; behavior may vary by tenant/rollout. If it fails for you, switch to **Access policies**, or keep **RBAC** and fetch with the AzureKeyVault@2 task instead.  
