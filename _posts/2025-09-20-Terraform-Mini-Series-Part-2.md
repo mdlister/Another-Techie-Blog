@@ -67,12 +67,18 @@ We’ll create a small **core‑infra** module, then **import** the existing RG/
 
 **`/codebase/modules/azure/core-infra/variables.tf`**
 ```hcl
-variable "location"         { type = string, default = "UK South" }
 variable "environment"      { type = string }
+variable "location" { 
+    type = string
+    default = "UK South" 
+}
 variable "subscription_id"  { type = string }
+variable "state_container"  { 
+    type = string
+    default = "tfstate" 
+}
 variable "state_rg_name"    { type = string }
 variable "state_sa_name"    { type = string }
-variable "state_container"  { type = string, default = "tfstate" }
 ```
 
 **`/codebase/modules/azure/core-infra/main.tf`**
@@ -135,51 +141,88 @@ terraform {
   }
   backend "azurerm" {
     resource_group_name  = "rg-tfstate-core-uks"   # your actual names
-    storage_account_name = "sttfstate12345"
+    storage_account_name = "sttfstate9683"
     container_name       = "tfstate"
     key                  = "bootstrap/core.tfstate"
     use_azuread_auth     = true
   }
 }
 
-provider "azurerm" { features {} }
+provider "azurerm" { 
+    features {} 
+    subscription_id = var.subscription_id
+    }
 
 module "core_infra" {
   source           = "../../modules/azure/core-infra"
   environment      = "bootstrap"
-  subscription_id  = "YOUR-SUB-ID"
+  subscription_id  = var.subscription_id
   state_rg_name    = "rg-tfstate-core-uks"
-  state_sa_name    = "sttfstate12345"
+  state_sa_name    = "sttfstate9683"
   state_container  = "tfstate"
 }
 ```
 
+**`/codebase/env/bootstrap/variables.tf`**
+```hcl
+variable "subscription_id" { type = string }
+```
+
 **Run the imports** (locally):
+
+You'll need Azure CLI installed on your machine https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-interactively?view=azure-cli-latest to do it from within Visual Studio Code which is the approach I've taken. 
+
+> winget install Microsoft.AzureCLI 
+
+after installing, you will need to close all of the visual studio windows open for VSCode to pick up the new path variable for az login or you end up with an error saying I don't know what you mean. 
+
 
 ```bash
 az login
 cd codebase/env/bootstrap/
 terraform init
 
-terraform import module.core_infra.azurerm_resource_group.state   /subscriptions/<subId>/resourceGroups/rg-tfstate-core-uks
+terraform import -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" module.core_infra.azurerm_resource_group.state /subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks
 
-terraform import module.core_infra.azurerm_storage_account.state   /subscriptions/<subId>/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate12345
+terraform import `
+  -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" `
+  module.core_infra.azurerm_storage_account.state `
+  "/subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate9683"
+
 
 # Storage container import: provider versions differ
 # Try ARM path first; if it fails, use the blob URL form
-terraform import module.core_infra.azurerm_storage_container.state   /subscriptions/<subId>/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate12345/blobServices/default/containers/tfstate
+terraform import `
+  -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" `
+  module.core_infra.azurerm_storage_container.state `
+  "/subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate9683/blobServices/default/containers/tfstate" 
 # or
-terraform import module.core_infra.azurerm_storage_container.state   https://sttfstate12345.blob.core.windows.net/tfstate
+terraform import module.core_infra.azurerm_storage_container.state   https://sttfstate9683.blob.core.windows.net/tfstate
 
-terraform plan
-terraform apply
+Now we will run a plan, review whats going to change and then apply the changes if we are happy
+
+terraform plan -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b"
+
+After running the apply stage you will need to confirm the changes by entering yes.
+
+terraform apply -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b"
 ```
+
+I also got this error whilst running this: 
+
+![TerraformOutputFailureBlob.png](/assets/images/2025-09-20-Terraform-Mini-Series-Part-2/TerraformOutputFailureBlob.png)
+
+some troubleshooting through the Azure CLI returned the problem, I needed to have more permissions over the storage, one of the roles defined in the message. I opted for Storage Blob Container Contributor. 
+
+![TerraformOutputFailureBlobRoles.png](/assets/images/2025-09-20-Terraform-Mini-Series-Part-2/TerraformOutputFailureBlobRoles.png)
 
 > **Notes on container import:** Recent provider versions sometimes accept the **blob URL** format when the ARM‑path style fails. See provider docs/issues for details.  
 > • Storage container resource: <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container>  
 > • Import syntax discussion: <https://github.com/hashicorp/terraform-provider-azurerm/issues/29065>
 
 ---
+
+We have now successfully imported the resource group, storage account & container for the statefiles to be manged under terraform as well.
 
 ## Step 2 — Create Key Vault (RBAC), assign permissions, add a demo secret (all in Terraform)
 
