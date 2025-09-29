@@ -85,9 +85,10 @@ this will output the exact package name and publisher you need for your AppLocke
 3. Profile type: **Templates → Custom**
 4. Add a setting:
    - **Name**: AppLocker - StoreApps - Deny WhatsApp
-   - **OMA-URI**: `./Vendor/MSFT/AppLocker/ApplicationLaunchRestrictions/{GUID}/StoreApps/Policy` (replace `{GUID}` with a randomly generated GUID)
+   - **OMA-URI**: ./Vendor/MSFT/AppLocker/ApplicationLaunchRestrictions/{GUID}/StoreApps/Policy 
+   `(replace {GUID} with a randomly generated GUID)`
    - **Data type**: String
-   - **Value**: Paste the `<RuleCollection Type="Appx">...</RuleCollection>` XML block (ensure UTF-8 encoding)
+   - **Value**: Paste the <RuleCollection Type="Appx">...</RuleCollection> XML block (ensure UTF-8 encoding)
 5. Assign to a small test device group. Save & create.
 
 ## Step 5 — Force, Monitor, and Test
