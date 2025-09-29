@@ -11,6 +11,8 @@ tags: [intune, applocker, windows11, whatsapp, wdac, app-control, endpoint-secur
 canonical_url: https://anothertechieblog.co.uk/block-whatsapp-with-applocker-intune
 modified: 2025-09-29
 
+# Blocking WhatsApp on Windows 11 with AppLocker and Intune
+
 ## Introduction
 
 Last week I was having a chat with someone about WhatsApp and how dispite blocking the Microsoft Store App users were still getting the app downloaded and installed. I've not explored much of the Intune Endpoint Security configuration as I've been focusing on Autopilot and Application Deployments latley. So i decided i'd have a go over the weekend and here's the steps I took to block it. This could be applied to any other app as well. 
