@@ -50,6 +50,7 @@ this will output the exact package name and publisher you need for your AppLocke
 2. Right-click → **Create New Rule** → _Action_: **Deny** → _User or group_: **Everyone** (or a test group) → Next.
 3. Choose **Use an installed packaged app as a reference**, select WhatsApp from the list, and finish the wizard.
 4. In AppLocker properties, set **Packaged app rules** to **Audit only** for first-pass testing.
+5. I've also found from testing that you need to create the default policy as well which is an allow all wildcard. Without it, alot of things stop working like Notepad, Company Portal, New Outlook as they are all Appx based applications.
 
 ![Security Policy](/images/2025-09-29-Intune-App-Locker-Block-WhatsApp/Local-Sec-Pol.png)
 
@@ -62,11 +63,19 @@ this will output the exact package name and publisher you need for your AppLocke
 **Example XML Block:**
 
 ```xml
+<AppLockerPolicy Version="1">
   <RuleCollection Type="Appx" EnforcementMode="Enabled">
-    <FilePublisherRule Id="89c2ee41-7b31-4e2e-9637-35ca79b0e63d" Name="5319275A.WhatsAppDesktop, from WhatsApp Inc." Description="" UserOrGroupSid="S-1-1-0" Action="Audit">
+    <FilePublisherRule Id="89c2ee41-7b31-4e2e-9637-35ca79b0e63d" Name="5319275A.WhatsAppDesktop, from WhatsApp Inc." Description="" UserOrGroupSid="S-1-1-0" Action="Deny">
       <Conditions>
         <FilePublisherCondition PublisherName="CN=24803D75-212C-471A-BC57-9EF86AB91435" ProductName="5319275A.WhatsAppDesktop" BinaryName="*">
           <BinaryVersionRange LowSection="*" HighSection="*" />
+        </FilePublisherCondition>
+      </Conditions>
+    </FilePublisherRule>
+    <FilePublisherRule Id="8be0f7bc-966d-41b3-98a5-5e95851e1750" Name="All signed packaged apps" Description="Allows members of the Everyone group to run packaged apps that are signed." UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePublisherCondition PublisherName="*" ProductName="*" BinaryName="*">
+          <BinaryVersionRange LowSection="0.0.0.0" HighSection="*" />
         </FilePublisherCondition>
       </Conditions>
     </FilePublisherRule>
@@ -75,6 +84,7 @@ this will output the exact package name and publisher you need for your AppLocke
   <RuleCollection Type="Exe" EnforcementMode="NotConfigured" />
   <RuleCollection Type="Msi" EnforcementMode="NotConfigured" />
   <RuleCollection Type="Script" EnforcementMode="NotConfigured" />
+</AppLockerPolicy>
 ```
 ---
 
