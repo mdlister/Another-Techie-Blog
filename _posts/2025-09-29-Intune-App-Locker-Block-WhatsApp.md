@@ -10,6 +10,7 @@ slug: block-whatsapp-with-applocker-intune
 tags: [intune, applocker, windows11, whatsapp, wdac, app-control, endpoint-security]
 canonical_url: https://anothertechieblog.co.uk/block-whatsapp-with-applocker-intune
 modified: 2025-09-29
+---
 
 # Blocking WhatsApp on Windows 11 with AppLocker and Intune
 
