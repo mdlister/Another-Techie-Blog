@@ -50,7 +50,7 @@ this will output the exact package name and publisher you need for your AppLocke
 3. Choose **Use an installed packaged app as a reference**, select WhatsApp from the list, and finish the wizard.
 4. In AppLocker properties, set **Packaged app rules** to **Audit only** for first-pass testing.
 
-![Security Policy](/assets/images/2025-09-29-Intune-App-Locker-Block-WhatsApp/Local-Sec-Pol.png)
+![Security Policy](/images/2025-09-29-Intune-App-Locker-Block-WhatsApp/Local-Sec-Pol.png)
 
 ## Step 3 — Export and Prepare the AppLocker Policy for Intune
 
