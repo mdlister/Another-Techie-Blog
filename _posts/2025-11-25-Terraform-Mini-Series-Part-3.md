@@ -3,9 +3,9 @@ layout: post
 comments: true
 thumb: Terraform_on_Azure.jpeg
 smallthumb: Terraform
-title: "Terraform on Azure DevOps, Day 3: Workload Identity Federation Deep Dive & Fallback Strategies"
+title: "No More Secret Rotas: Azure DevOps to Azure with Workload Identity Federation"
 tagline: Learn Terraform in a mini series for Azure and M365
-description: "Master Workload Identity Federation for Azure DevOps pipelines. Learn troubleshooting, fallback to App Registration with Key Vault rotation, and migration strategies."
+description: "Configure WIF for Azure DevOps pipelines. If org policy mandates secrets, store them in Key Vault and plan rotation."
 slug: terraform-mini-series-part-3
 tags: [terraform, azure, azure-devops, workload-identity, oidc, key-vault, authentication]
 canonical_url: https://anothertechieblog.co.uk/terraform-mini-series-part-3
@@ -14,382 +14,393 @@ modified: 2025-11-25
 
 > **Series goal (reminder):** Stand up a practical, multi‑environment Terraform platform on Azure DevOps (with split pipelines for Infra/Entra/MS Graph), using secure auth, remote state, and reusable modules—scaling from *Dev* to *Prod*.
 
-# Day 3 — Workload Identity Federation Deep Dive & Fallback Strategies
-
-It's been a while since I had some time to continue my mini series but now the nights have drawn in and work is easing I'm hoping i can finish these off and get to mess around with more terraform.
+# Day 3 — No More Secret Rotas: Workload Identity Federation vs App Registration
 
 ---
 
-## What you’ll build today
+## What You'll Build Today
 
-- **WIF Troubleshooting Guide**: Solve common Workload Identity Federation issues based on real implementation experience
-- **Fallback Authentication**: Create an App Registration with client secret for organisations that can't use WIF
-- **Secret Rotation**: Implement automated Key Vault secret rotation using Azure Functions and Event Grid
-- **Migration Path**: Step-by-step guide to migrate from App Registration to WIF
-- **Decision Framework**: Clear guidance on when to use each authentication method
+- **WIF Deep Dive**: Understand why we struggled with WIF in Day 1 and how we fixed it
+- **App Registration Fallback**: Create an App Registration with Terraform-managed secret rotation
+- **30-Day Rotation Strategy**: Implement automatic monthly secret refresh using Terraform
+- **Comparison Framework**: When to use WIF vs App Registration in real organisations
+- **Production Patterns**: Extend this to service accounts and other App Registrations
 
-> **Days 1-2 Recap**: You have a working pipeline using Workload Identity Federation, remote state in Azure Storage, Key Vault integration, and multi-environment pipeline parameters.
+> **Days 1-2 Recap**: We got WIF working after troubleshooting Terraform task versions, created remote state with locking, and set up Key Vault integration. Now let's understand the "why" behind our authentication choices.
 
-
-
-## Why manage these resources via code?
-
-Infrastructure that isn’t codified drifts—someone clicks a setting, policies change, and suddenly your pipeline fails. **Infrastructure as Code (IaC)** fixes that: every change is reviewed, versioned, and reproducible. Moving your Day 1 bootstrap (state storage) **into Terraform** means its security posture (versioning, retention, and locks) is **enforced**. If disaster strikes, you can rebuild environments from Git.
-
-> The Terraform **azurerm** backend stores state in Azure Blob Storage and uses Blob’s native **lease‑based locking**—safe for teams/CI. With `use_azuread_auth = true` it authenticates to the blob **data plane** using Entra ID (Azure AD).  
-> • Backend docs: <https://developer.hashicorp.com/terraform/language/backend/azurerm>  
-> • Ensure your pipeline identity has **Storage Blob Data Contributor** on the state account/container (data plane), otherwise `terraform init` will fail.
 
 ---
 
-## Step 0 — Prereqs
+## Why Authentication Strategy Matters
 
-We are continuing in the series so you should be able to continue where you left off. All the code can be found here https://github.com/mdlister/TerraformMiniSeries for each day as well. 
+In Day 1, we hit a major roadblock: **WIF authentication failures** that took hours to troubleshoot. The root cause? Using the wrong Terraform task version and authentication parameters. This experience highlights why understanding authentication methods is crucial.
 
-- Azure subscription + permissions to assign roles and create resources.  
-- Azure DevOps org/project + **ARM service connection** using **Workload Identity Federation** (from Day 1).  
-- The state RG/storage/container from Day 1 (names you actually used).
+**The Problem with Secrets:**
+- 🔑 **Manual rotation** - someone always forgets
+- ⏰ **Pipeline failures** at 3 AM when secrets expire  
+- 🔒 **Security risks** from long-lived credentials
+- 📋 **Compliance overhead** for audit trails
+
+**WIF Solution:**
+- ✅ **No secrets** to rotate or manage
+- ✅ **Short-lived tokens** (typically 1 hour)
+- ✅ **Automatic renewal** by Azure DevOps
+- ✅ **Recommended by Microsoft** for new projects
 
 ---
 
-## Step 1 — Import the state storage into Terraform (and lock it)
+## Step 1 — WIF: What Went Wrong in Day 1 and Why It Matters
 
-We’ll create a small **core‑infra** module, then **import** the existing RG/Storage/Container so Terraform manages them going forward.
+Remember this error from Day 1?
 
-> **What terraform import does**: it associates an existing cloud resource with a resource block in your configuration, adding it to Terraform **state** without changing it. From then on, Terraform tracks it for drift and enforces configuration. You still need to make your config **match the real resource** (same names/IDs), or Terraform will want to replace it during an apply.
-
-### 1.1 Module layout
-
-```
-/codebase
-  /modules
-    /azure
-      /core-infra
-        main.tf
-        variables.tf
-        outputs.tf
+### This took 4 hours to troubleshoot!
+```text
+ERROR: Authentication failed using OIDC...
 ```
 
-**`/codebase/modules/azure/core-infra/variables.tf`**
+The Root Cause: Terraform Task Version Mismatch
+In Day 1, we discovered that **TerraformTask@5** with specific parameters was essential:
+
+Wrong approach (what failed initially):
+
+```yaml
+- task: TerraformTask@4  # ← Wrong version
+  inputs:
+    backendAzureRmUseEntraIdForAuthentication: true  # ← Misleading parameter
+```
+
+Correct approach (what worked):
+
+```yaml
+- task: TerraformTask@5  # ← Must be v5
+  inputs:
+    backendAzureRmUseEntraIdForAuthentication: false  # ← Counter-intuitive!
+    backendAzureRmUseCliFlagsForAuthentication: true   # ← This enables OIDC
+```
+
+Why This Configuration Works
+The backendAzureRmUseCliFlagsForAuthentication: true parameter tells the Terraform task to use the Azure CLI authentication context, which automatically picks up the OIDC token from Azure DevOps. This is the magic that makes WIF work.
+
+WIF Architecture Recap
+
+```text
+Azure DevOps Pipeline 
+    ↓ (OIDC Token)
+Entra ID (Azure AD)
+    ↓ (Validates Federation)
+Azure Resources (ARM)
+```
+
+No secrets in the chain - just temporary tokens that Azure DevOps manages automatically.
+
+# Step 2 — App Registration Fallback: For When WIF Isn't Possible
+While WIF is ideal, some organisations can't use it due to:
+
+Legacy compliance requirements
+
+Third-party tool limitations
+
+Network security policies
+
+Existing investment in secret management
+
+For these scenarios, let's build a robust App Registration with Terraform-managed secret rotation that automatically refreshes every 30 days.
+
+# 2.1 Create the App Registration Module
+Create /codebase/modules/azure/app-registration/main.tf
+
 ```hcl
-variable "environment"      { type = string }
-variable "location" { 
-    type = string
-    default = "UK South" 
-}
-variable "subscription_id"  { type = string }
-variable "state_container"  { 
-    type = string
-    default = "tfstate" 
-}
-variable "state_rg_name"    { type = string }
-variable "state_sa_name"    { type = string }
-```
+# App Registration for Terraform pipeline (fallback option)
+resource "azurerm_application" "terraform" {
+  display_name = "app-terraform-${var.environment}-uks"
+  owners       = [data.azurerm_client_config.current.object_id]
+  
+  prevent_duplicate_names = true
 
-**`/codebase/modules/azure/core-infra/main.tf`**
-```hcl
-resource "azurerm_resource_group" "state" {
-  name     = var.state_rg_name
-  location = var.location
-  tags     = { environment = var.environment, managed-by = "terraform" }
-}
-
-resource "azurerm_storage_account" "state" {
-  name                     = var.state_sa_name               # must match existing SA name
-  resource_group_name      = azurerm_resource_group.state.name
-  location                 = azurerm_resource_group.state.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  allow_nested_items_to_be_public = false
-
-  blob_properties {
-    versioning_enabled  = true
-    change_feed_enabled = true
-    delete_retention_policy { days = 30 }
-  }
-
-  tags = { environment = var.environment, managed-by = "terraform" }
-}
-
-resource "azurerm_storage_container" "state" {
-  name                  = var.state_container                # e.g., tfstate
-  storage_account_id    = azurerm_storage_account.state.id   # ARM path style
-  container_access_type = "private"
-}
-
-resource "azurerm_management_lock" "state_storage_lock" {
-  name       = "cannot-delete"
-  scope      = azurerm_storage_account.state.id
-  lock_level = "CanNotDelete"
-  notes      = "Protect Terraform state storage."
-}
-```
-
-**`/codebase/modules/azure/core-infra/outputs.tf`**
-```hcl
-output "state_storage_rg_name"         { value = azurerm_resource_group.state.name }
-output "state_storage_account_name"    { value = azurerm_storage_account.state.name }
-output "state_storage_container_name"  { value = azurerm_storage_container.state.name }
-```
-
-### 1.2 Bootstrap config and imports
-
-```
-/codebase/env/bootstrap/
-```
-
-**`/codebase/env/bootstrap/main.tf`**
-```hcl
-terraform {
-  required_providers {
-    azurerm = { source = "hashicorp/azurerm", version = "~> 4.0" }
-  }
-  backend "azurerm" {
-    resource_group_name  = "rg-tfstate-core-uks"   # your actual names
-    storage_account_name = "sttfstate9683"
-    container_name       = "tfstate"
-    key                  = "bootstrap/core.tfstate"
-    use_azuread_auth     = true
+  tags = {
+    environment = var.environment
+    managed-by  = "terraform"
+    purpose     = "terraform-pipeline"
   }
 }
 
-provider "azurerm" { 
-    features {} 
-    subscription_id = var.subscription_id
-    }
+resource "azurerm_service_principal" "terraform" {
+  application_id = azurerm_application.terraform.application_id
+  owners         = [data.azurerm_client_config.current.object_id]
 
+  tags = {
+    environment = var.environment
+    managed-by  = "terraform"
+  }
+}
+
+# Client secret with 180-day maximum lifespan but 30-day rotation
+resource "azurerm_application_password" "terraform" {
+  application_id = azurerm_application.terraform.id
+  display_name   = "secret-${var.rotation_trigger}"
+  
+  # 180-day maximum lifespan (Azure limit)
+  end_date_relative = "4320h" # 180 days
+  
+  # Force rotation when the trigger changes
+  rotate_when_changed = {
+    rotation = var.rotation_trigger
+  }
+}
+
+# RBAC Assignment for Azure resources
+resource "azurerm_role_assignment" "contributor" {
+  scope                = var.subscription_id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_service_principal.terraform.object_id
+}
+
+# Storage permissions for state management
+resource "azurerm_role_assignment" "storage_contributor" {
+  scope                = var.state_storage_account_id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_service_principal.terraform.object_id
+}
+```
+/codebase/modules/azure/app-registration/variables.tf
+
+```hcl
+variable "environment" { type = string }
+variable "subscription_id" { type = string }
+variable "state_storage_account_id" { type = string }
+variable "rotation_trigger" { 
+  type    = string
+  default = "initial"
+}
+```
+
+2.2 Monthly Rotation Trigger Strategy
+Add to /codebase/env/dev/main.tf
+
+```hcl
+# Monthly rotation trigger - changes value each month
+locals {
+  # This creates a new value each month, forcing secret rotation
+  # Format: YYYY-MM (changes monthly)
+  monthly_rotation_trigger = formatdate("YYYY-MM", timestamp())
+  
+  # Alternative: Force rotation on specific schedule
+  # monthly_rotation_trigger = "rotation-${formatdate("YYYY-MM", timestamp())}"
+}
+
+# Update your core infra module call
 module "core_infra" {
   source           = "../../modules/azure/core-infra"
-  environment      = "bootstrap"
+  environment      = "dev"
   subscription_id  = var.subscription_id
   state_rg_name    = "rg-tfstate-core-uks"
   state_sa_name    = "sttfstate9683"
   state_container  = "tfstate"
-}
-```
-
-**`/codebase/env/bootstrap/variables.tf`**
-```hcl
-variable "subscription_id" { type = string }
-```
-
-**Run the imports** (locally):
-
-You'll need Azure CLI installed on your machine https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli-interactively?view=azure-cli-latest to do it from within Visual Studio Code which is the approach I've taken. 
-
-> winget install Microsoft.AzureCLI 
-
-after installing, you will need to close all of the visual studio windows open for VSCode to pick up the new path variable for az login or you end up with an error saying I don't know what you mean. 
-
-
-```bash
-az login
-cd codebase/env/bootstrap/
-terraform init
-
-terraform import -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" module.core_infra.azurerm_resource_group.state /subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks
-
-terraform import `
-  -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" `
-  module.core_infra.azurerm_storage_account.state `
-  "/subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate9683"
-
-
-# Storage container import: provider versions differ
-# Try ARM path first; if it fails, use the blob URL form
-terraform import `
-  -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b" `
-  module.core_infra.azurerm_storage_container.state `
-  "/subscriptions/50b57618-d85f-4203-826a-2e464126e24b/resourceGroups/rg-tfstate-core-uks/providers/Microsoft.Storage/storageAccounts/sttfstate9683/blobServices/default/containers/tfstate" 
-# or
-terraform import module.core_infra.azurerm_storage_container.state   https://sttfstate9683.blob.core.windows.net/tfstate
-
-Now we will run a plan, review whats going to change and then apply the changes if we are happy
-
-terraform plan -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b"
-
-After running the apply stage you will need to confirm the changes by entering yes.
-
-terraform apply -var "subscription_id=50b57618-d85f-4203-826a-2e464126e24b"
-```
-
-I also got this error whilst running this: 
-
-![TerraformOutputFailureBlob.png](/assets/images/2025-09-20-Terraform-Mini-Series-Part-2/TerraformOutputFailureBlob.png)
-
-some troubleshooting through the Azure CLI returned the problem, I needed to have more permissions over the storage, one of the roles defined in the message. I opted for Storage Blob Container Contributor. 
-
-![TerraformOutputFailureBlobRoles.png](/assets/images/2025-09-20-Terraform-Mini-Series-Part-2/TerraformOutputFailureBlobRoles.png)
-
-> **Notes on container import:** Recent provider versions sometimes accept the **blob URL** format when the ARM‑path style fails. See provider docs/issues for details.  
-> • Storage container resource: <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container>  
-> • Import syntax discussion: <https://github.com/hashicorp/terraform-provider-azurerm/issues/29065>
-
----
-
-We have now successfully imported the resource group, storage account & container for the statefiles to be manged under terraform as well.
-
-## Step 2 — Create Key Vault (RBAC), assign permissions, add a demo secret (all in Terraform)
-
-In many organisations, **RBAC** is the standard. We’ll create a Key Vault **with RBAC**, grant the pipeline identity read access to **secrets**, and add a small **demo secret** to prove the wiring—everything managed by Terraform.
-
-This Key Vault will be used for the infrastructure across all environments and later we will develop a dev, test and prod keyvault for specific secrets for each environment.
-
-> If your org prefers the legacy **Access policy** model for ADO Variable Groups, you can flip the approach: set `enable_rbac_authorization = false` and replace the role assignment with an `azurerm_key_vault_access_policy` that grants **Get, List**.
-
-> Object ID needed as the pipeline_principal_id in bootstrap/main.tf is the It's the objectID of the Enterprise App and not the application id.
-
-Add to `/codebase/modules/azure/core-infra/main.tf`
-```hcl
-data "azurerm_client_config" "current" {}
-
-variable "pipeline_principal_id" {
-  type        = string
-  description = "Object ID of the Azure DevOps service connection principal"
+  pipeline_principal_id = var.pipeline_principal_id
 }
 
-resource "azurerm_key_vault" "secrets" {
-  name                          = "kv-secrets-${var.environment}-uks"
-  location                      = azurerm_resource_group.state.location
-  resource_group_name           = azurerm_resource_group.state.name
-  tenant_id                     = data.azurerm_client_config.current.tenant_id
-  sku_name                      = "standard"
-  enable_rbac_authorization     = true   # RBAC model
-  purge_protection_enabled      = true
-  soft_delete_retention_days    = 90
-  public_network_access_enabled = true
-  tags = { environment = var.environment, managed-by = "terraform" }
-}
-
-# Grant the pipeline SP read access to secrets (list/get)
-resource "azurerm_role_assignment" "kv_secrets_user" {
-  scope                = azurerm_key_vault.secrets.id
-  role_definition_name = "Key Vault Secrets User"
-  principal_id         = var.pipeline_principal_id
-}
-
-# Demo secret to prove end-to-end flow (non-sensitive example)
-resource "azurerm_key_vault_secret" "demo" {
-  name         = "tfstate-storage-account-name"
-  value        = var.state_sa_name
-  key_vault_id = azurerm_key_vault.secrets.id
-}
-```
-
-**Pass the pipeline principal ID in `/codebase/env/bootstrap/main.tf`**
-```hcl
-module "core_infra" {
-  # ...existing args...
-  pipeline_principal_id  = "YOUR-AZURE-DEVOPS-SERVICE-CONNECTION-OBJECT-ID"
-}
-```
-
-Run terraform apply again from the bootstrap/ directory to create the Key Vault, assign RBAC, and add the demo secret.
-
-> I got an error here originally because I was still running Terraform locally from the VSCode terminal and my account wasn't setup in RBAC as a Key Vault Secrets User so I was getting forbidden. Updated the permissions for my account within the portal and waited 10 minutes and then it worked. Had I used the azure devops pipeline it would have worked as we had already assigned the role to that account. As I was creating a Secret, i needed the role Key Vault Secrets Officer, the pipeline will only read secrets which is why it has the role of secets user. You'll need to swap this if you want to create secrets in Terraform as well. (Not recommended) 
-
-> **RBAC role explanation:** The **Key Vault Secrets User** role allows list/get on secrets in an RBAC‑mode vault (data‑plane). See: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
-
-We'll also update the pipeline to allow you to run from the pipeline now instead of locally. 
-
----
-
-## Step 2b — Updating the Pipeline for Environment Selection
-What are we changing, and why?
-Up to now, your pipeline has used a hardcoded variable (e.g., envName: dev) to determine which environment (dev, test, prod) to deploy. This works, but it’s inflexible—every time you want to run against a different environment, you have to edit the YAML or create a separate pipeline.
-We’re going to improve this by:
-
-Adding a dropdown parameter to the pipeline, so you can choose the target environment (dev, test, prod) each time you run it manually.
-Dynamically including the correct variable group(s) and working directory for the selected environment.
-Making the pipeline more robust, reusable, and friendly for both CI and manual runs.
-
-Why is this important?
-
-Flexibility: You can deploy to any environment without editing code.
-Safety: Reduces the risk of accidentally deploying to the wrong environment.
-Scalability: Makes it easy to add more environments in the future.
-Best practice: Mirrors how professional DevOps teams manage multi-environment deployments.
-
-
-How does it work?
-
-Parameters in Azure DevOps pipelines create a dropdown menu when you click “Run pipeline”.
-The pipeline uses compile-time expressions ($ {{ if ... }}) to include the correct variable group(s) and set the working directory based on your selection.
-All Terraform commands (init, plan, apply) run in the folder for the chosen environment (e.g., codebase/env/dev).
-
-```hcl
-pool:
-  vmImage: ubuntu-latest
-
+# App Registration with monthly rotation
+module "app_registration" {
+  source = "../../modules/azure/app-registration"
   
-parameters:
-- name: environment
-  displayName: Target environment
-  type: string
-  default: dev
-  values:
-  - dev
-  - test
-  - prod
-  - bootstrap
+  environment             = "dev"
+  subscription_id         = var.subscription_id
+  state_storage_account_id = module.core_infra.state_storage_account_id
+  rotation_trigger        = local.monthly_rotation_trigger
+}
+```
+2.3 Store Secrets in Key Vault with Compliance Tracking
+Add to /codebase/modules/azure/core-infra/main.tf
 
+```hcl
+# Store App Registration secrets in Key Vault
+resource "azurerm_key_vault_secret" "terraform_client_id" {
+  name         = "terraform-appreg-client-id"
+  value        = module.app_registration.client_id
+  key_vault_id = azurerm_key_vault.secrets.id
+  
+  tags = {
+    secret-type   = "app-registration"
+    environment   = var.environment
+    managed-by    = "terraform"
+  }
+}
 
-variables:
-- name: envName
-  value: ${{ parameters.environment }}
+resource "azurerm_key_vault_secret" "terraform_client_secret" {
+  name         = "terraform-appreg-client-secret"
+  value        = module.app_registration.client_secret
+  key_vault_id = azurerm_key_vault.secrets.id
+  
+  # Set 30-day expiration for compliance tracking
+  expiration_date = timeadd(timestamp(), "720h") # 30 days
+  
+  tags = {
+    secret-type   = "client-secret"
+    environment   = var.environment
+    rotation      = "monthly-terraform"
+    last_rotated  = timestamp()
+    managed-by    = "terraform"
+  }
+}
 
-
-${{ if eq(parameters.environment, 'dev') }}:
-  - group: tf-dev
-  # - group: kv-dev        # uncomment if you have a KV-linked group for dev
-
-${{ if eq(parameters.environment, 'test') }}:
-  - group: tf-test
-  # - group: kv-test
-
-${{ if eq(parameters.environment, 'prod') }}:
-  - group: tf-prod
-  # - group: kv-prod
+resource "azurerm_key_vault_secret" "terraform_tenant_id" {
+  name         = "terraform-appreg-tenant-id"
+  value        = data.azurerm_client_config.current.tenant_id
+  key_vault_id = azurerm_key_vault.secrets.id
+  
+  tags = {
+    secret-type = "tenant-id"
+    environment = var.environment
+    managed-by  = "terraform"
+  }
+}
 ```
 
-You can also add environment names to the stages as well. 
+Add outputs to App Registration module (/codebase/modules/azure/app-registration/outputs.tf):
 
-> stages:
-> stage: Validate
->  displayname: Validate ($(envName))
+```hcl
+output "client_id" {
+  value     = azurerm_application.terraform.application_id
+  sensitive = true
+}
 
----
+output "client_secret" {
+  value     = azurerm_application_password.terraform.value
+  sensitive = true
+}
 
-## Step 3 — Link Key Vault to Azure DevOps (with RBAC) and use the secret at runtime
-
-In Step 2b, we have already added key vault variable groups to our pipeline, we just need to make sure they now follow the format when creating them kv-environment so they match. 
-
-1. **Pipelines → Library → + Variable group** (e.g., kv-environment).  
-2. Toggle **Link secrets from an Azure key vault as variables**.  
-3. Choose your **ARM service connection** (WIF) and **Authorize**.  
-4. Select your **Key Vault** and **Authorize**.  
-5. **Add** the secret `tfstate-storage-account-name` and **Save**.
-
-> **How Variable Groups ↔ Key Vault works**: Only **secret names** are mapped; **values** are fetched at **runtime**. Updates to existing secret **values** flow automatically; adding/removing **new secret names** requires updating the Variable Group’s selected list.  
-> **Important doc note:** Microsoft’s page currently says **RBAC‑mode vaults aren’t supported** for this Variable Group feature. In our testing, RBAC **did** work when the pipeline principal had **Key Vault Secrets User**; behavior may vary by tenant/rollout. If it fails for you, switch to **Access policies**, or keep **RBAC** and fetch with the AzureKeyVault@2 task instead.  
-> • ADO docs (support note): <https://learn.microsoft.com/azure/devops/pipelines/library/link-variable-groups-to-key-vaults?view=azure-devops>  
-> • Key Vault RBAC guide: <https://learn.microsoft.com/azure/key-vault/general/rbac-guide>
-
-
-Now all your code is in DevOps, you can delete the .terraform and the terraform.lock file from the bootstrap directory as the state is now in the cloud. 
----
-
-## Troubleshooting
-
-- **`terraform init` fails to reach state** (403 or lease errors): ensure the pipeline principal has **Storage Blob Data Contributor** on the state account/container; confirm backend has `use_azuread_auth = true`
-- **Variable Group can’t select secrets**: confirm the pipeline principal holds **data‑plane** permissions (RBAC: *Key Vault Secrets User*) and the secret isn’t expired/disabled. If still blocked, use **Access policies** or the **AzureKeyVault@2** task.
-- **Import drift**: make sure your Terraform arguments (names/IDs) **exactly match** the existing resources before you import; computed names will cause replacement.
-- **Container import**: if the ARM path fails, use the **blob URL** syntax shown above.
+output "application_object_id" {
+  value = azurerm_application.terraform.object_id
+}
+```
 
 ---
 
-## What’s next (Day 3)
+How the 30-Day Rotation Works
+The Rotation Magic
+Monthly Trigger Change:
 
-- **Multi‑environment structure** (dev/test/prod) with reusable modules and `*.tfvars`
-- **Promotion** patterns and environment‑scoped Key Vaults/Variable Groups.
-- **CAF‑aligned naming** for consistency across your estate.
+monthly_rotation_trigger changes from "2024-01" to "2024-02" each month
+
+This forces Terraform to create a new App Registration secret
+
+Terraform State Management:
+
+Terraform detects the rotate_when_changed trigger has updated
+
+Creates a new App Registration password
+
+Automatically updates Key Vault with the new secret
+
+Pipeline Integration:
+
+Next pipeline run uses the updated secret from Key Vault
+
+Zero manual intervention required
+
+Security Benefits
+180-day maximum lifespan: Meets Azure's security requirements
+
+30-day active rotation: Better than typical 90-day policies
+
+Automatic compliance: Key Vault tracks expiration dates
+
+No secret sprawl: Old secrets are automatically managed
+
+Production Example
+
+```hcl
+# In production, you might want more control
+variable "force_rotation" {
+  type    = string
+  default = "2024-Q1" # Change quarterly for less frequent rotation
+}
+
+# Or use a random value that changes monthly
+resource "random_id" "rotation" {
+  keepers = {
+    rotation = formatdate("YYYY-MM", timestamp())
+  }
+  
+  byte_length = 8
+}
+```
+
+Step 3 — Comparison: WIF vs App Registration
+Technical Comparison
+Aspect	Workload Identity Federation	App Registration + Rotation
+Setup Complexity	Moderate (Day 1 struggles)	Simple
+Long-term Maintenance	Zero effort	Automated via Terraform
+Security	No long-lived secrets	30-day rotation
+Pipeline Impact	Failed on wrong task version	Seamless rotation
+Compliance	Modern, recommended	Traditional with automation
+Organizational Fit
+Choose WIF when:
+
+Starting new projects
+
+Security team prefers token-based auth
+
+You can invest in initial setup
+
+Using modern Azure DevOps
+
+Choose App Registration when:
+
+Integrating with legacy systems
+
+Compliance requires secret rotation tracking
+
+Third-party tools don't support OIDC
+
+You need immediate simplicity
+
+Our Recommendation
+For this series: We'll continue with WIF as it's the modern approach and we've overcome the initial hurdles.
+
+For your organization: Evaluate both options. Many enterprises run a hybrid approach - WIF for new projects, App Registration for legacy systems.
+
+---
+
+Applying This Pattern Elsewhere
+The Terraform-managed rotation pattern we built isn't just for Terraform service accounts. You can extend it to:
+
+4.1 Service Accounts with Password Rotation
+```hcl
+# Rotate service account passwords monthly
+resource "azuread_user" "service_account" {
+  user_principal_name = "svc-terraform@yourdomain.com"
+  display_name        = "Terraform Service Account"
+  password            = random_password.service_account.result
+}
+
+resource "random_password" "service_account" {
+  length  = 32
+  special = true
+  
+  keepers = {
+    rotation = formatdate("YYYY-MM", timestamp())
+  }
+}
+```
+
+4.2 Multiple App Registrations using a module
+```hcl
+# Generic pattern for any App Registration
+module "api_app_reg" {
+  source = "../app-registration"
+  
+  app_name       = "app-api-${var.environment}"
+  environment    = var.environment
+  rotation_trigger = local.monthly_rotation_trigger
+}
+```
+
+What's Next (Day 4)
+Repo Structure Deep Dive: Organising your codebase for scale
+
+CAF Naming Conventions: Implementing consistent naming across environments
+
+Environment Strategy: Dev, Test, Prod patterns that work
+
+Tagging Standards: Cost management and operational visibility
